@@ -3,6 +3,7 @@
   import { ref, computed, onMounted } from "vue";
   import { RouterLink, RouterView } from "vue-router";
   import { useStorage } from '@vueuse/core'
+  import Web3 from 'Web3'
   import { useRouteQuery } from '@vueuse/router'
 	import IconUSDT from '@/components/icons/IconUSDT.vue'
 	import IconSpacex from '@/components/icons/IconSpacex.vue'

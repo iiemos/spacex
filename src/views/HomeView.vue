@@ -3,7 +3,7 @@
   import { ElMessage } from "element-plus";
   import { useGlobalState } from '@/store'
   import SpaceXABI from '@/abis/defiABI.json'
-  // import Web3 from 'Web3'
+  import Web3 from 'Web3'
   const state = useGlobalState()
   // import '@/joinWeb3'
 

@@ -5,6 +5,7 @@ import { useGlobalState } from "@/store";
 import { useDebounceFn } from '@vueuse/core'
 import SpaceXABI from "@/abis/defiABI.json";
 import usdtABI from "@/abis/usdtABI.json";
+import Web3 from 'Web3'
 import { ElMessage } from "element-plus";
 const state = useGlobalState();
 console.log("state", state);
