@@ -1,5 +1,5 @@
 import './assets/main.css'
-
+import EventEmitter from 'events';
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { createI18n } from 'vue-i18n' 
@@ -24,7 +24,7 @@ import router from './router'
 // // something vue-i18n options here ...
 // })
 
-
+window.EventEmitter = EventEmitter;
 const app = createApp(App)
 
 import Header from './components/Header.vue'
