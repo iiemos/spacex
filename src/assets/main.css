@@ -460,7 +460,7 @@ footer ul li a:hover {
   font-size: 100px;
   margin-bottom: 15px;
   animation: fadeInUp 0.5s ease-in-out;
-
+  word-wrap:break-word;
 }
 
 .section-inner-center p {
@@ -546,6 +546,7 @@ footer ul li a:hover {
 
   .section-inner-center h3 {
     font-size: 75px;
+    word-wrap:break-word;
   }
 }
 
@@ -580,6 +581,7 @@ footer ul li a:hover {
   .section-inner-center h3 {
     font-size: 50px;
     font: 48px/45px D-DIN-Bold,Arial,Verdana,sans-serif;
+    word-wrap:break-word;
   }
 
   /* Stats */
@@ -724,7 +726,7 @@ footer ul li a:hover {
 }
 .action_btns span{
   text-align: center;
-  width: 48%;
+  width: 100%;
   cursor: pointer;
   padding: 10px 15px;
   border: 1px solid #fff;

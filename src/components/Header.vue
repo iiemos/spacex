@@ -1,11 +1,50 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { useStorage } from '@vueuse/core'
+import { useRouteQuery } from '@vueuse/router'
+import { useI18n } from "vue-i18n";
 import { RouterLink, RouterView } from "vue-router";
 import IconLogo from "./icons/IconLogo.vue";
-
+import IconEarth from "./icons/IconEarth.vue";
+const { locale } = useI18n();
 const isActive = ref(false);
+const langArr = ref([
+  {
+    text: 'English',
+    key: 'en'
+  },
+  {
+    text: '日本語',
+    key: 'ja'
+  },
+  {
+    text: '한국인',
+    key: 'ko'
+  },
+  {
+    text: 'Français',
+    key: 'fr'
+  },
+  {
+    text: '简体中文',
+    key: 'zh-cn'
+  },
+])
+
+onMounted(() => {
+})
+const invites = useRouteQuery('invites')
+if(invites.value){
+  useStorage('invites', invites)
+}else{
+  useStorage('invites', '0xDA02d522d8cd60de0a2F9773f80b16Fc9ED99bdd')
+}
 const navToggle = () => {
   isActive.value = !isActive.value;
+};
+const changeLang = (val) => {
+  locale.value = val
+  localStorage.setItem('language', val)
 };
 </script>
 <template>
@@ -21,15 +60,15 @@ const navToggle = () => {
           <RouterLink to="/">Home</RouterLink>
         </li>
         <li class="mobile-only">
-          <RouterLink to="liquidity">Liquidity</RouterLink>
+          <RouterLink :to="`liquidity`">Liquidity</RouterLink>
         </li>
-		<li class="mobile-only">
+        <li class="mobile-only">
           <RouterLink to="income">Income</RouterLink>
         </li>
-		<li class="mobile-only">
+        <li class="mobile-only">
           <RouterLink to="team">Team</RouterLink>
         </li>
-		<li class="mobile-only">
+        <li class="mobile-only">
           <RouterLink to="burn">Burn</RouterLink>
         </li>
         <li class="mobile-only">
@@ -38,6 +77,18 @@ const navToggle = () => {
       </ul>
     </div>
     <header class="main-header">
+      <el-dropdown trigger="click">
+        <span class="el-dropdown-link">
+          <IconEarth style="z-index: 999; width: 24px; height: 24px;"/>
+        </span>
+        
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item v-for="litem in langArr" :key="litem.key" @click="changeLang(litem.key)">{{ litem.text }}</el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+
       <div class="logo">
         <RouterLink to="/">
           <IconLogo />
@@ -46,25 +97,26 @@ const navToggle = () => {
       <nav class="desktop-main-menu">
         <ul>
           <li>
-            <RouterLink to="/">Home</RouterLink>
-          </li>
-		  <li>
-            <RouterLink to="income">Income</RouterLink>
+            <RouterLink to="/">{{ $t("home") }}</RouterLink>
           </li>
           <li>
-            <RouterLink to="liquidity">Liquidity</RouterLink>
-          </li>
-		  <li>
-            <RouterLink to="team">Team</RouterLink>
-          </li>
-		  <li>
-            <RouterLink to="burn">Burn</RouterLink>
+            <RouterLink to="income">{{ $t("income") }}</RouterLink>
           </li>
           <li>
-            <RouterLink to="#">White Paper</RouterLink>
+            <RouterLink to="liquidity">{{ $t("liquidity") }}</RouterLink>
+          </li>
+          <li>
+            <RouterLink to="team">{{ $t("team") }}</RouterLink>
+          </li>
+          <li>
+            <RouterLink to="burn">{{ $t("burn") }}</RouterLink>
+          </li>
+          <li>
+            <RouterLink to="#">{{ $t("whitePaper") }}</RouterLink>
           </li>
         </ul>
       </nav>
+
     </header>
     <!-- Hamburger Menu -->
     <button
@@ -78,6 +130,7 @@ const navToggle = () => {
       <span class="hamburger-middle"></span>
       <span class="hamburger-bottom"></span>
     </button>
+
   </div>
 </template>
 
