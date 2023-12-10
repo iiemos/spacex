@@ -46,30 +46,32 @@
       console.log('MetaMask is installed!');
       console.log('当前连接网络的id:', window.ethereum.chainId)
     }
+    setTimeout(()=>{
+      web3.value = new Web3(window.ethereum)
+      // 连接钱包账户切换后触发的事件
+      ethereum.on("accountsChanged", function(accounts) {
+        console.log('连接钱包账户切换后触发的事件', accounts[0]);//一旦切换账号这里就会执行
+        myAddress.value = accounts[0];
+        joinWeb3();
+      });
+      // 正确处理链更改之后的业务流程可能很复杂。官方建议链更改只有重新加载页面
+      ethereum.on('chainChanged', (chainId) => {
+        console.log("chainId",chainId)
+        window.location.reload();
+      });
+      // 断开连接监听事件
+      ethereum.on('disconnect',  async function (result, error) {
+        console.log("断开连接",result)
+        console.log("error",error)
+      });
+      connections()
+      // 测试网络 97
+      if(ethereum.networkVersion == 97){
+        console.log('当前是测试网络');
+        // ElMessage.error('Please check if the network environment is a production environment');
+      }
+    },1000)
 
-    web3.value = new Web3(window.ethereum)
-    // 连接钱包账户切换后触发的事件
-    ethereum.on("accountsChanged", function(accounts) {
-      console.log('连接钱包账户切换后触发的事件', accounts[0]);//一旦切换账号这里就会执行
-      myAddress.value = accounts[0];
-      joinWeb3();
-    });
-    // 正确处理链更改之后的业务流程可能很复杂。官方建议链更改只有重新加载页面
-    ethereum.on('chainChanged', (chainId) => {
-      console.log("chainId",chainId)
-      window.location.reload();
-    });
-    // 断开连接监听事件
-    ethereum.on('disconnect',  async function (result, error) {
-      console.log("断开连接",result)
-      console.log("error",error)
-    });
-    connections()
-    // 测试网络 97
-    if(ethereum.networkVersion == 97){
-      console.log('当前是测试网络');
-      // ElMessage.error('Please check if the network environment is a production environment');
-    }
   })
 
 
