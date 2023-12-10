@@ -1,4 +1,6 @@
 import './assets/main.css'
+import './assets/js/web3.min.js'
+import './assets/js/player-min.js'
 import EventEmitter from 'events';
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
