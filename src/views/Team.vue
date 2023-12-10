@@ -3,7 +3,7 @@ import { ref, computed, onMounted } from "vue";
 import { RouterLink, RouterView } from "vue-router";
 import { useGlobalState } from "@/store";
 import { useDebounceFn } from '@vueuse/core'
-import Web3 from 'Web3'
+import Web3 from 'web3'
 import { ElMessage } from "element-plus";
 import {
   Pointer,
