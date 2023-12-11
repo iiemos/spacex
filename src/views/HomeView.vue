@@ -7,7 +7,6 @@
   const state = useGlobalState()
   // import '@/joinWeb3'
 
-  console.log('state',state);
   let web3 = ref() 
   let myAddress=ref('')//我的地址
   let DeFiContract=ref(null)// 合约实例
@@ -156,7 +155,7 @@
       <div class="section-inner">
         <h4>SpaceX</h4>
         <h2>{{ $t("HighYieldMiner") }}</h2>
-        <a href="#" class="btn">
+        <a href="javascript:;" class="btn">
           <div class="hover"></div>
           <span @click="copyLink()" v-if="myAddress">{{ $t("inviteFriends") }}</span>
           <span @click="connections()" v-if="!myAddress">{{ $t("ConnectWallet") }}</span>
