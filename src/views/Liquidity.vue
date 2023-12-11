@@ -34,10 +34,10 @@
 
   const invites = useRouteQuery('invs')
   const refLinks = ref('')
-  if(invites.value){
-    refLinks.value = invites.value
+  if(!invites.value){
+    refLinks.value = '0xDA02d522d8cd60de0a2F9773f80b16Fc9ED99bdd'
   }else{
-    refLinks.value =  '0xDA02d522d8cd60de0a2F9773f80b16Fc9ED99bdd'
+    refLinks.value =  invites.value
   }
   console.log('当前邀请链接为：',refLinks.value);
   const changeTabs = (idx)=>{
@@ -163,6 +163,7 @@
     }else{
       //执行转账语句
       console.log('执行转账语句');
+      if(!refLinks.value) refLinks.value = '0xDA02d522d8cd60de0a2F9773f80b16Fc9ED99bdd'
       if(DeFiContract.value){
         try{
           const mode = 1; // 模式
