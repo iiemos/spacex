@@ -52,5 +52,14 @@
     "TotalDeflation": "总通缩量",
     "Circulation": "流通量",
     "personalBoost": "个人助推力",
-    "boostOthers": "他人助推力"
+    "boostOthers": "他人助推力",
+
+    "boostOthers1": "复制邀请链接成功！",
+    "boostOthers2": "授权成功，请继续操作！",
+    "boostOthers3": "添加星链燃料成功！",
+    "boostOthers4": "USDT 余额不足，请重新输入！",
+    "boostOthers5": "SpaceX 余额不足，请重新输入！",
+    "boostOthers6": "Gas 余额不足，请补充 Gas 费用！",
+    "boostOthers7": "链接钱包成功！"
+    
 }
