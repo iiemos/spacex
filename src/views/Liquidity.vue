@@ -13,6 +13,7 @@
   import { Pointer } from '@element-plus/icons-vue'
   import SpaceXABI from "@/abis/defiABI.json";
   import usdtABI from "@/abis/usdtABI.json";
+  import lpABI from "@/abis/lpABI.json";
 
 
   const tabsActive = ref(0)
@@ -31,6 +32,7 @@
   let usdtContract = ref(""); // usdt合约实例
   let SpaceXContract = ref(""); // SpaceX合约实例
   let mySpaceXBalance = ref(""); // SpaceX余额
+  let LPContract = ref(""); // LP合约实例
 
   const invites = useRouteQuery('invs')
   const refLinks = ref('')
@@ -43,6 +45,12 @@
   const changeTabs = (idx)=>{
     tabsActive.value = idx
   }
+
+  let toFixed8 = (val)=>{ 
+    if(val == 0) return val
+    return Number((Math.floor(val * 100000) / 100000)).toFixed(5)
+  }
+
   onMounted(() => {
 
     // Web3浏览器检测
@@ -131,7 +139,8 @@
       if(state.infoData.value.inivet != '0x0000000000000000000000000000000000000000'){
         refLinks.value = state.infoData.value.inivet
       }
-      console.log("state.userLevel.value", state.userLevel.value);
+      // 创建 lpABI 实例
+      LPContract.value = new web3.value.eth.Contract(lpABI, state.LPAddress.value);
     } catch (e) {
       console.log(e);
     }
@@ -205,11 +214,19 @@
     }
     if(myETHBalance.value * 1 < 0.001) return ElMessage.warning('Insufficient Gas');
     if(myUSDTBalance.value < 0.01 || myUSDTNumber.value < 0.01) return ElMessage.error('Minimum deposit amount 0.01 BNB');
-    // 判断账户USDT余额是否充足
+    // 判断账户 USDT 余额是否充足
     if(myUSDTNumber.value > myUSDTBalance.value) return ElMessage.error('Solde USDT Coin insuffisant');
     if(addSpaceX.value > mySpaceXBalance.value) return ElMessage.error('Solde SpaceX Coin insuffisant');
     const callValue = web3.value.utils.toWei(myUSDTNumber.value);
-    // 计算等比例的
+    // 验证USDT是否授权
+    let USDTofCurrentAccount = await usdtContract.value.methods.allowance(myAddress.value, state.LPAddress.value).call();
+    console.log('USDTofCurrentAccount',USDTofCurrentAccount);
+    // 验证SpaceX是否授权
+    let SpaceXofCurrentAccount = await SpaceXContract.value.methods.allowance(myAddress.value, state.LPAddress.value).call();
+    console.log('SpaceXofCurrentAccount',SpaceXofCurrentAccount);
+
+    // LPContract.value
+
   })
 
 </script>
@@ -218,7 +235,7 @@
       <Header />
       <section class="section-animate bg-dragon liquidity_warp">
         <div class="section-inner-center">
-            <div class="lp_warp">
+            <div class="lp_warp"> 
               <div class="content-tabs animate" role="tablist">
               </div>
                 <h2>{{ $t("AddLiquidity") }}</h2>
@@ -237,10 +254,13 @@
                   </div>
                   <div>
                     <div style="text-align: right;">
-                      {{ myETHBalance }} BNB 
+                      {{ toFixed8(myETHBalance) }} BNB 
                     </div>
                     <div style="text-align: right;">
-                      {{ myUSDTBalance }} USDT
+                      {{ toFixed8(myUSDTBalance) }} USDT
+                    </div>
+                    <div style="text-align: right;">
+                      {{ toFixed8(mySpaceXBalance) }} SpaceX
                     </div>
                   </div>
                 </div>

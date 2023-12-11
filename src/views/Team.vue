@@ -243,7 +243,8 @@ const copyLink = () => {
             </tr>
             <tr class="js-stagger">
               <td>{{ $t("SuperiorAddress") }}</td>
-              <td style="text-align: right">
+              <td v-if="state.infoData.value.inivet == '0x0000000000000000000000000000000000000000'">--</td>
+              <td style="text-align: right" v-else>
                 <el-tooltip
                   class="box-item"
                   effect="dark"
