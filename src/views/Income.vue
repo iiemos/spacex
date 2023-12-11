@@ -21,7 +21,14 @@ let mySpaceXBalance = ref(""); // SpaceX余额
 
 let fromWeiFun = (val)=>{ 
   if(val == 0) return val
-  return (val / 1000000000000000000).toFixed(6)
+  return (val / 1000000000000000000).toFixed(18)
+}
+// 权重转换级别
+const teansformLevel = (v)=>{
+  if(v == 5) return '1';
+  if(v == 10) return '2';
+  if(v == 12) return '3';
+  if(v == 15) return '4';
 }
 
 onMounted(() => {
@@ -231,19 +238,19 @@ const compound = useDebounceFn( async() => {
                 </tr>
                 <tr class="js-stagger">
                   <td>{{ $t("MyComputingPower") }}</td>
-                  <td>{{ state.infoData.value.userCp }} <span> / v{{ state.userLevel.value }}</span></td>
+                  <td>{{ fromWeiFun(state.infoData.value.userCp) }} <span> / v{{ teansformLevel(state.userLevel.value) }}</span></td>
                 </tr>
                 <tr class="js-stagger">
                   <td>{{ $t("AllComputingPower") }}</td>
-                  <td>{{ state.infoData.value.allStakeCp }} <span>/ ALL</span></td>
+                  <td>{{ fromWeiFun(state.infoData.value.allStakeCp) }} <span>/ ALL</span></td>
                 </tr>
                 <tr class="js-stagger">
                   <td>{{ $t("ReceivedRewards") }}</td>
-                  <td>{{ state.infoData.value.overAward }} <span>USDT</span></td>
+                  <td>{{ fromWeiFun(state.infoData.value.overAward) }} <span>USDT</span></td>
                 </tr>
                 <tr class="js-stagger">
                   <td>{{ $t("RewardsAvailable") }}</td>
-                  <td>{{ state.infoData.value.userAward }} <span>USDT</span></td>
+                  <td>{{ fromWeiFun(state.infoData.value.userAward) }} <span>USDT</span></td>
                 </tr>
               </tbody>
             </table>
