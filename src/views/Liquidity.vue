@@ -152,7 +152,7 @@
               inviter,
               myAddress.value,
               mode,
-              2000000
+              callValue
             )
             .send({
               from: myAddress.value,
