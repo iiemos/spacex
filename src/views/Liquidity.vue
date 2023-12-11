@@ -149,34 +149,6 @@
       usdtContract.value.methods.approve(state.contractAddress.value , defaultVal).send({from: myAddress.value,gas:20000000}).then((receipt) => {
         console.log('Approval successful:', receipt);
         ElMessage.success('Approval successful！')
-        if(DeFiContract.value){
-          try{
-            const mode = 1; // 模式
-              DeFiContract.value.methods.stake(
-                refLinks.value,
-                myAddress.value,
-                mode,
-                callValue
-              )
-              .send({
-                from: myAddress.value,
-              })
-              .on('transactionHash', (hash)=>{
-                console.log(hash);
-                ElMessage.success('Transaction sent')
-                console.log("Transaction sent");
-              })
-              .once('receipt', res => {
-                ElMessage.success('Transaction confirmed')
-                console.log("Transaction confirmed");
-                myUSDTNumber.value = 0
-                joinWeb3();
-              })
-              .catch(err => console.log(err))
-            }catch(e){
-              console.log(e);
-            }
-          }
       }).catch((error) => {
         console.error('Approval failed:', error.code);
         if(error.code == '-32603'){
