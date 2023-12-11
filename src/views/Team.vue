@@ -25,6 +25,10 @@ let refLinks = computed(()=>{
     }
     return 'Connect Wallet'
   })
+let fromWeiFun = (val)=>{ 
+  if(val == 0) return val
+  return (val / 1000000000000000000).toFixed(6)
+}
 
 onMounted(() => {
   // Web3浏览器检测
@@ -103,9 +107,10 @@ const joinWeb3 = async () => {
     console.log("state", state.infoData.value);
     // 获取直推地址列表
     if(state.infoData.value.teamLength>0){
-      teamArray.value = await DeFiContract.value.methods
+      let teamData = await DeFiContract.value.methods
       .getTeamArry(myAddress.value,0,state.infoData.value.teamLength)
       .call();
+      teamArray.value = teamData.filter(arrItem => arrItem != '0x0000000000000000000000000000000000000000');
     }
   } catch (e) {
     console.log(e);
@@ -222,7 +227,7 @@ const copyLink = () => {
               <td>{{ $t("ZTRewardsAvailable") }}</td>
               <td>
 								<div class="receive_btn" @click="receiveFunc('award')">
-									{{ state.infoData.value.teamAward }}USDT
+									{{ fromWeiFun(state.infoData.value.teamAward) }}USDT
 									<el-icon style="margin-left: 4px;"><Pointer /></el-icon>
 								</div>
 							</td>
@@ -231,7 +236,7 @@ const copyLink = () => {
               <td>{{ $t("15ZTRewardsAvailable") }}</td>
               <td>
                 <div class="receive_btn" @click="receiveFunc('award2')">
-									{{ state.infoData.value.team2Award }}USDT
+									{{ fromWeiFun(state.infoData.value.team2Award) }}USDT
 									<el-icon style="margin-left: 4px;"><Pointer /></el-icon>
 								</div>
               </td>
