@@ -103,7 +103,7 @@ const changeLang = (val) => {
             <RouterLink to="income">{{ $t("income") }}</RouterLink>
           </li>
           <li>
-            <RouterLink to="liquidity">{{ $t("liquidity") }}</RouterLink>
+            <RouterLink :to="`liquidity?ref=${invites}`">{{ $t("liquidity") }}</RouterLink>
           </li>
           <li>
             <RouterLink to="team">{{ $t("team") }}</RouterLink>
