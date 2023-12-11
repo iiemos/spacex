@@ -209,19 +209,19 @@ const copyLink = () => {
             </tr>
             <tr class="js-stagger">
               <td>{{ $t("TeamComputingPower") }}</td>
-              <td>{{ state.infoData.value.teamCp }} <span>/ ALL</span></td>
+              <td>{{ fromWeiFun(state.infoData.value.teamCp) }} <span>/ ALL</span></td>
             </tr>
             <tr class="js-stagger">
               <td>{{ $t("15ThTeamComputingPower") }}</td>
-              <td>{{ state.infoData.value.teamCp2 }}</td>
+              <td>{{ fromWeiFun(state.infoData.value.teamCp2) }}</td>
             </tr>
 						<tr class="js-stagger">
               <td>{{ $t("RewardsReceived") }}</td>
-              <td>{{ state.infoData.value.overTeam }}</td>
+              <td>{{ fromWeiFun(state.infoData.value.overTeam) }}</td>
             </tr>
 						<tr class="js-stagger">
               <td>{{ $t("15RewardsReceived") }}</td>
-              <td>{{ state.infoData.value.overTeam2 }}</td>
+              <td>{{ fromWeiFun(state.infoData.value.overTeam2) }}</td>
             </tr>
             <tr class="js-stagger">
               <td>{{ $t("ZTRewardsAvailable") }}</td>

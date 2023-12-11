@@ -19,6 +19,10 @@ let myUSDTBalance = ref(""); // USDT余额
 let SpaceXContract = ref(""); // SpaceX合约实例
 let mySpaceXBalance = ref(""); // SpaceX余额
 
+let fromWeiFun = (val)=>{ 
+  if(val == 0) return val
+  return (val / 1000000000000000000).toFixed(6)
+}
 
 onMounted(() => {
   // Web3浏览器检测
