@@ -321,8 +321,8 @@ const compound = useDebounceFn( async() => {
                 <td>1.2</td>
               </tr>
               <tr>
-                <td>V2</td>
-                <td>>= 25001</td>
+                <td>V4</td>
+                <td>≥ 25001</td>
                 <td>1.5</td>
               </tr>
             </tbody>

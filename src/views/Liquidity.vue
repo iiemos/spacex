@@ -27,13 +27,15 @@
   let infoData = ref(""); //我的地址
   let myETHBalance = ref(""); // EHT余额
   let myUSDTBalance = ref(""); // USDT余额
-  let mySpaceXBalance = ref(""); // SpaceX余额
   let DeFiContract = ref(""); // 合约实例
   let usdtContract = ref(""); // usdt合约实例
+  let SpaceXContract = ref(""); // SpaceX合约实例
+  let mySpaceXBalance = ref(""); // SpaceX余额
+
   const invites = useRouteQuery('invites')
   const refLinks = ref('')
   if(invites.value){
-    refLinks.value = invites
+    refLinks.value = invites.value
   }else{
     refLinks.value =  '0xDA02d522d8cd60de0a2F9773f80b16Fc9ED99bdd'
   }
@@ -116,6 +118,13 @@
       let usdtBalance = await usdtContract.value.methods.balanceOf(myAddress.value).call();
       myUSDTBalance.value = web3.value.utils.fromWei(usdtBalance, "ether");
       console.log('usdtBalance',myUSDTBalance.value);
+      // 创建spacex合约实例
+      SpaceXContract.value = new web3.value.eth.Contract(usdtABI, state.infoData.value.spaceCoin);
+      console.log('usdtContract.value',SpaceXContract.value);
+      // 获取spacex余额
+      let SpaceXBalance = await SpaceXContract.value.methods.balanceOf(myAddress.value).call();
+      mySpaceXBalance.value = web3.value.utils.fromWei(SpaceXBalance, "ether");
+      console.log('mySpaceXBalance',mySpaceXBalance.value);
       // 获取当前质押等级
       state.userLevel.value = await DeFiContract.value.methods.getUserLevel(myAddress.value).call();
       console.log("state.userLevel.value", state.userLevel.value);
@@ -128,7 +137,8 @@
       return joinWeb3()
     }
     if(myETHBalance.value * 1 < 0.001) return ElMessage.warning('Insufficient Gas');
-    if(myUSDTBalance.value < 0.01 || myUSDTNumber.value < 0.01) return ElMessage.error('Minimum deposit amount 0.01 BNB');
+    if(myUSDTBalance.value < 0.01 || myUSDTNumber.value < 0.01) return ElMessage.error('Minimum deposit amount 0.01 USDT');
+    if(myUSDTNumber.value > myUSDTBalance.value) return ElMessage.error('Solde de portefeuille insuffisant');
     const callValue = web3.value.utils.toWei(myUSDTNumber.value);
     // 判断是否授权
     let allowanceOfCurrentAccount = await usdtContract.value.methods.allowance(myAddress.value, state.contractAddress.value).call();
@@ -152,9 +162,8 @@
       if(DeFiContract.value){
         try{
           const mode = 1; // 模式
-            let inviter = refLinks.value;
             DeFiContract.value.methods.stake(
-              inviter,
+              refLinks.value,
               myAddress.value,
               mode,
               callValue
@@ -182,12 +191,15 @@
   }, 500)
 
   const addLiquidityFn2 = useDebounceFn( async(val) => {
-    console.log(123);
+    console.log('addSpaceX',addSpaceX.value);
     if(!myAddress.value || myAddress.value === '0x00000000000000000000000000000000deadbeef'){
       return joinWeb3()
     }
     if(myETHBalance.value * 1 < 0.001) return ElMessage.warning('Insufficient Gas');
     if(myUSDTBalance.value < 0.01 || myUSDTNumber.value < 0.01) return ElMessage.error('Minimum deposit amount 0.01 BNB');
+    // 判断账户USDT余额是否充足
+    if(myUSDTNumber.value > myUSDTBalance.value) return ElMessage.error('Solde USDT Coin insuffisant');
+    if(addSpaceX.value > mySpaceXBalance.value) return ElMessage.error('Solde SpaceX Coin insuffisant');
     const callValue = web3.value.utils.toWei(myUSDTNumber.value);
     // 计算等比例的
   })
