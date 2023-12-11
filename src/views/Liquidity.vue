@@ -156,6 +156,7 @@
     // 判断是否授权
     let allowanceOfCurrentAccount = await usdtContract.value.methods.allowance(myAddress.value, state.contractAddress.value).call();
     console.log('被授权的数量：',allowanceOfCurrentAccount);
+    console.log('购买的数量',callValue);
     if(allowanceOfCurrentAccount == 0 || allowanceOfCurrentAccount < callValue){
       console.log('执行授权语句');
       let defaultVal = web3.value.utils.toWei("10000000000", "ether");
