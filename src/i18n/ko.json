@@ -50,5 +50,7 @@
     "SpaceXTokenBurnStatus": "SpaceX 토큰 소각 상태",
     "TotalBlackHole": "블랙홀 파괴",
     "TotalDeflation": "총 디플레이션",
-    "Circulation": "순환"
+    "Circulation": "순환",
+    "personalBoost": "개인 부스트",
+    "boostOthers": "타인의 부양"
 }

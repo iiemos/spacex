@@ -33,7 +33,7 @@ const langArr = ref([
 
 onMounted(() => {
 })
-const invites = useRouteQuery('invites')
+const invites = useRouteQuery('invs')
 console.log('invites',invites.value);
 // if(!invites.value) 
 // if(invites.value){
@@ -59,22 +59,22 @@ const changeLang = (val) => {
     >
       <ul>
         <li class="mobile-only">
-          <RouterLink :to="`/?ref=${invites}`">{{ $t("home") }}</RouterLink>
+          <RouterLink :to="`/?invs=${invites}`">{{ $t("home") }}</RouterLink>
         </li>
         <li class="mobile-only">
-          <RouterLink :to="`liquidity?ref=${invites}`">{{ $t("liquidity") }}</RouterLink>
+          <RouterLink :to="`liquidity?invs=${invites}`">{{ $t("liquidity") }}</RouterLink>
         </li>
         <li class="mobile-only">
-          <RouterLink :to="`income?ref=${invites}`">{{ $t("income") }}</RouterLink>
+          <RouterLink :to="`income?invs=${invites}`">{{ $t("income") }}</RouterLink>
         </li>
         <li class="mobile-only">
-          <RouterLink :to="`team?ref=${invites}`">{{ $t("team") }}</RouterLink>
+          <RouterLink :to="`team?invs=${invites}`">{{ $t("team") }}</RouterLink>
         </li>
         <li class="mobile-only">
-          <RouterLink :to="`burn?ref=${invites}`">{{ $t("burn") }}</RouterLink>
+          <RouterLink :to="`burn?invs=${invites}`">{{ $t("burn") }}</RouterLink>
         </li>
         <li class="mobile-only">
-          <RouterLink :to="`/?ref=${invites}`">{{ $t("whitePaper") }}</RouterLink>
+          <RouterLink :to="`/?invs=${invites}`">{{ $t("whitePaper") }}</RouterLink>
         </li>
       </ul>
     </div>
@@ -92,29 +92,29 @@ const changeLang = (val) => {
       </el-dropdown>
 
       <div class="logo">
-        <RouterLink :to="`/?ref=${invites}`">
+        <RouterLink :to="`/?invs=${invites}`">
           <IconLogo />
         </RouterLink>
       </div>
       <nav class="desktop-main-menu">
         <ul>
           <li>
-            <RouterLink :to="`/?ref=${invites}`">{{ $t("home") }}</RouterLink>
+            <RouterLink :to="`/?invs=${invites}`">{{ $t("home") }}</RouterLink>
           </li>
           <li>
-            <RouterLink :to="`income?ref=${invites}`">{{ $t("income") }}</RouterLink>
+            <RouterLink :to="`income?invs=${invites}`">{{ $t("income") }}</RouterLink>
           </li>
           <li>
-            <RouterLink :to="`liquidity?ref=${invites}`">{{ $t("liquidity") }}</RouterLink>
+            <RouterLink :to="`liquidity?invs=${invites}`">{{ $t("liquidity") }}</RouterLink>
           </li>
           <li>
-            <RouterLink :to="`team?ref=${invites}`">{{ $t("team") }}</RouterLink>
+            <RouterLink :to="`team?invs=${invites}`">{{ $t("team") }}</RouterLink>
           </li>
           <li>
-            <RouterLink :to="`burn?ref=${invites}`">{{ $t("burn") }}</RouterLink>
+            <RouterLink :to="`burn?invs=${invites}`">{{ $t("burn") }}</RouterLink>
           </li>
           <li>
-            <RouterLink :to="`/?ref=${invites}`">{{ $t("whitePaper") }}</RouterLink>
+            <RouterLink :to="`/?invs=${invites}`">{{ $t("whitePaper") }}</RouterLink>
           </li>
         </ul>
       </nav>

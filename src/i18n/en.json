@@ -51,5 +51,7 @@
     "SpaceXTokenBurnStatus": "SpaceX token burn status",
     "TotalBlackHole": "black hole destruction",
     "TotalDeflation": "total deflation",
-    "Circulation": "Circulation"
+    "Circulation": "Circulation",
+    "personalBoost": "personal boost",
+    "boostOthers": "The boost of others"
 }

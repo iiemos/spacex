@@ -3,10 +3,12 @@
   import { ElMessage } from "element-plus";
   import { useGlobalState } from '@/store'
   import SpaceXABI from '@/abis/defiABI.json'
+  import { useRouteQuery } from '@vueuse/router'
   // import Web3 from 'web3'
   const state = useGlobalState()
   // import '@/joinWeb3'
-
+  const invites = useRouteQuery('invs')
+  console.log('首页显示的邀请地址',invites.value);
   let web3 = ref() 
   let myAddress=ref('')//我的地址
   let DeFiContract=ref(null)// 合约实例
@@ -15,7 +17,7 @@
 
   let refLinks = computed(()=>{ 
     if(myAddress.value){
-      return window.location.origin + `/?ref=${myAddress.value}`
+      return window.location.origin + `/?invs=${myAddress.value}`
     }
     return 'Connect Wallet'
   })
@@ -178,7 +180,7 @@
       <div class="section-inner">
         <h4>SpaceX</h4>
         <h2>{{ $t("ViewHomePage") }}</h2>
-        <a href="#" class="btn">
+        <a :href="`/?invs=${invites}`" class="btn">
           <div class="hover"></div>
           <span>{{ $t('home') }}</span>
         </a>
@@ -189,7 +191,7 @@
       <div class="section-inner">
         <h4>SpaceX</h4>
         <h2>{{ $t("AddLiquidity") }}</h2>
-        <a href="/liquidity" class="btn">
+        <a :href="`/liquidity?invs=${invites}`" class="btn">
           <div class="hover"></div>
           <span>{{ $t('liquidity') }}</span>
         </a>
@@ -200,7 +202,7 @@
       <div class="section-inner">
         <h4>SpaceX</h4>
         <h2>{{ $t("ViewMyTeam") }}</h2>
-        <a href="/team" class="btn">
+        <a :href="`/team?invs=${invites}`" class="btn">
           <div class="hover"></div>
           <span>{{ $t('team') }}</span>
         </a>

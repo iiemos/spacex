@@ -21,7 +21,7 @@ const centerDialogVisible = ref(false)
 
 let refLinks = computed(()=>{ 
     if(myAddress.value){
-      return window.location.origin + `/?ref=${myAddress.value}`
+      return window.location.origin + `/?invs=${myAddress.value}`
     }
     return 'Connect Wallet'
   })
@@ -244,7 +244,14 @@ const copyLink = () => {
             <tr class="js-stagger">
               <td>{{ $t("SuperiorAddress") }}</td>
               <td style="text-align: right">
-                <span class="address_txt">{{ state.infoData.value.inivet }}</span>
+                <el-tooltip
+                  class="box-item"
+                  effect="dark"
+                  :content="state.infoData.value.inivet"
+                  placement="top-end"
+                >
+                  <span class="address_txt">{{ state.infoData.value.inivet }}</span>
+                </el-tooltip>
               </td>
             </tr>
             <tr class="js-stagger">

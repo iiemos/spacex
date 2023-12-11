@@ -50,5 +50,7 @@
     "SpaceXTokenBurnStatus": "SpaceX 代币销毁状态",
     "TotalBlackHole": "黑洞销毁",
     "TotalDeflation": "总通缩量",
-    "Circulation": "流通量"
+    "Circulation": "流通量",
+    "personalBoost": "个人助推力",
+    "boostOthers": "他人助推力"
 }

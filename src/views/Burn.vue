@@ -18,7 +18,7 @@
   
   let refLinks = computed(()=>{ 
     if(myAddress.value){
-      return window.location.origin + `/?ref=${myAddress.value}`
+      return window.location.origin + `/?invs=${myAddress.value}`
     }
     return 'Connect Wallet'
   })

@@ -50,5 +50,7 @@
     "SpaceXTokenBurnStatus": "SpaceX トークンの燃焼ステータス",
     "TotalBlackHole": "ブラックホールの破壊",
     "TotalDeflation": "完全なデフレ",
-    "Circulation": "循環"
+    "Circulation": "循環",
+    "personalBoost": "個人的なブースト",
+    "boostOthers": "他人の後押し"
 }

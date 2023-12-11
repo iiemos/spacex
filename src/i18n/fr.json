@@ -50,5 +50,7 @@
     "SpaceXTokenBurnStatus": "Statut de gravure du jeton SpaceX",
     "TotalBlackHole": "destruction d'un trou noir",
     "TotalDeflation": "déflation totale",
-    "Circulation": "Circulation"
+    "Circulation": "Circulation",
+    "personalBoost": "coup de pouce personnel",
+    "boostOthers": "Le coup de pouce des autres"
 }

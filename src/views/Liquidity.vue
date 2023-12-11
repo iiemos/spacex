@@ -32,7 +32,7 @@
   let SpaceXContract = ref(""); // SpaceX合约实例
   let mySpaceXBalance = ref(""); // SpaceX余额
 
-  const invites = useRouteQuery('invites')
+  const invites = useRouteQuery('invs')
   const refLinks = ref('')
   if(invites.value){
     refLinks.value = invites.value
@@ -148,7 +148,7 @@
       let defaultVal = web3.value.utils.toWei("10000000000", "ether");
       usdtContract.value.methods.approve(state.contractAddress.value , defaultVal).send({from: myAddress.value,gas:20000000}).then((receipt) => {
         console.log('Approval successful:', receipt);
-        ElMessage.success('授权成功！请继续操作！',3)
+        ElMessage.success('Approval successful！')
       }).catch((error) => {
         console.error('Approval failed:', error.code);
         if(error.code == '-32603'){
@@ -262,7 +262,7 @@
                 </table>
             </div>
             <div class="add_liquidity" @click="addLiquidityFn()"  v-if="tabsActive ==0">
-			        <span class="text">{{ $t("AddLiquidity") }}</span>
+			        <span class="text">{{ $t("personalBoost") }}</span>
 		        </div>
             <div class="add_liquidity" @click="addLiquidityFn2()" v-if="tabsActive ==1">
 			        <span class="text">{{ $t("AddLiquidity") }}</span>
