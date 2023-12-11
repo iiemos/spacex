@@ -147,12 +147,9 @@
       if(DeFiContract.value){
         try{
           const mode = 1; // 模式
-            let inviter = ref('');
-            if(web3.value.utils.isAddress(refLinks.value)){
-              inviter.value = refLinks.value;
-            }
+            let inviter = refLinks.value;
             DeFiContract.value.methods.stake(
-              inviter.value,
+              inviter,
               myAddress.value,
               mode,
               2000000
