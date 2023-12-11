@@ -11,21 +11,6 @@ import i18n from './i18n'
 import App from './App.vue'
 import router from './router'
 
-// const messages = {
-//     en: () => import('./i18n/en.json'),
-//     zh: () => import('./i18n/zh.json'),
-//     ko: () => import('./i18n/ko.json'),
-//     ja: () => import('./i18n/ja.json'),
-//     fr: () => import('./i18n/fr.json'),
-// };
-// console.log('messages',messages);
-// const i18n = createI18n({
-//     locale: 'en',
-//     fallbackLocale: 'en',
-//     messages
-// // something vue-i18n options here ...
-// })
-
 window.EventEmitter = EventEmitter;
 const app = createApp(App)
 

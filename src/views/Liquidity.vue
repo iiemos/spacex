@@ -13,9 +13,14 @@
   import { Pointer } from '@element-plus/icons-vue'
   import SpaceXABI from "@/abis/defiABI.json";
   import usdtABI from "@/abis/usdtABI.json";
+
+
   const tabsActive = ref(0)
-  const myUSDTNumber = ref(0)
-  const addSpaceX = ref(0)
+  const myUSDTNumber = ref(0) // 添加的usdt数量
+  let addSpaceX = computed((d)=>{  // 动态计算添加的SpaceX数量
+    return Number(myUSDTNumber.value) * 1.94433333333333
+  })
+
   const state = useGlobalState();
   let web3 = ref();
   let myAddress = ref(""); //我的地址
@@ -28,7 +33,7 @@
   const invites = useRouteQuery('invites')
   const refLinks = ref('')
   if(invites.value){
-    refLinks.value = localStorage.getItem('invites')
+    refLinks.value = invites
   }else{
     refLinks.value =  '0xDA02d522d8cd60de0a2F9773f80b16Fc9ED99bdd'
   }
@@ -165,6 +170,7 @@
             .once('receipt', res => {
               ElMessage.success('Transaction confirmed')
               console.log("Transaction confirmed");
+              myUSDTNumber.value = 0
               joinWeb3();
             })
             .catch(err => console.log(err))
@@ -173,10 +179,18 @@
           }
       }
     }
-
-
   }, 500)
 
+  const addLiquidityFn2 = useDebounceFn( async(val) => {
+    console.log(123);
+    if(!myAddress.value || myAddress.value === '0x00000000000000000000000000000000deadbeef'){
+      return joinWeb3()
+    }
+    if(myETHBalance.value * 1 < 0.001) return ElMessage.warning('Insufficient Gas');
+    if(myUSDTBalance.value < 0.01 || myUSDTNumber.value < 0.01) return ElMessage.error('Minimum deposit amount 0.01 BNB');
+    const callValue = web3.value.utils.toWei(myUSDTNumber.value);
+    // 计算等比例的
+  })
 
 </script>
 <template>
@@ -228,14 +242,17 @@
                                 <IconSpacex class="lp_icon" /> SpaceX
                               </div>
                             </td>
-                            <td >
-                              <input type="text" v-model="addSpaceX">
+                            <td style="padding: 20px 0;">
+                              {{ addSpaceX }}
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div class="add_liquidity" @click="addLiquidityFn()">
+            <div class="add_liquidity" @click="addLiquidityFn()"  v-if="tabsActive ==0">
+			        <span class="text">{{ $t("AddLiquidity") }}</span>
+		        </div>
+            <div class="add_liquidity" @click="addLiquidityFn2()" v-if="tabsActive ==1">
 			        <span class="text">{{ $t("AddLiquidity") }}</span>
 		        </div>
         </div>

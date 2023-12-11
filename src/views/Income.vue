@@ -21,7 +21,7 @@ let mySpaceXBalance = ref(""); // SpaceX余额
 
 let fromWeiFun = (val)=>{ 
   if(val == 0) return val
-  return (val / 1000000000000000000).toFixed(18)
+  return (val / 1000000000000000000).toFixed(8)
 }
 // 权重转换级别
 const teansformLevel = (v)=>{

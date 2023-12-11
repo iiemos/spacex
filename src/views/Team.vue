@@ -27,7 +27,7 @@ let refLinks = computed(()=>{
   })
 let fromWeiFun = (val)=>{ 
   if(val == 0) return val
-  return (val / 1000000000000000000).toFixed(6)
+  return (val / 1000000000000000000).toFixed(8)
 }
 
 onMounted(() => {
