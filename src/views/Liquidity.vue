@@ -39,6 +39,7 @@
   }else{
     refLinks.value =  '0xDA02d522d8cd60de0a2F9773f80b16Fc9ED99bdd'
   }
+  console.log('当前邀请链接为：',refLinks.value);
   const changeTabs = (idx)=>{
     tabsActive.value = idx
   }
