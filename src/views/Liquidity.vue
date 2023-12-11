@@ -162,6 +162,10 @@
       if(DeFiContract.value){
         try{
           const mode = 1; // 模式
+          console.log('邀请链接:',refLinks.value);
+          console.log('收益地址:',myAddress.value);
+          console.log('mode:',mode);
+          console.log('购买金额:',callValue);
             DeFiContract.value.methods.stake(
               refLinks.value,
               myAddress.value,
