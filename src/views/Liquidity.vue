@@ -162,6 +162,39 @@
       usdtContract.value.methods.approve(state.contractAddress.value , defaultVal).send({from: myAddress.value,gas:20000000}).then((receipt) => {
         console.log('Approval successful:', receipt);
         ElMessage.success('Approval successful！')
+        console.log('授权之后执行转账语句.....');
+        if(DeFiContract.value){
+          try{
+            const mode = 1; // 模式
+            console.log('邀请链接:',refLinks.value);
+            console.log('收益地址:',myAddress.value);
+            console.log('mode:',mode);
+            console.log('购买金额:',callValue);
+              DeFiContract.value.methods.stake(
+                refLinks.value,
+                myAddress.value,
+                mode,
+                callValue
+              )
+              .send({
+                from: myAddress.value,
+              })
+              .on('transactionHash', (hash)=>{
+                console.log(hash);
+                ElMessage.success('Transaction sent')
+                console.log("Transaction sent");
+              })
+              .once('receipt', res => {
+                ElMessage.success('Transaction confirmed')
+                console.log("Transaction confirmed");
+                myUSDTNumber.value = 0
+                joinWeb3();
+              })
+              .catch(err => console.log(err))
+            }catch(e){
+              console.log(e);
+            }
+        }
       }).catch((error) => {
         console.error('Approval failed:', error.code);
         if(error.code == '-32603'){
