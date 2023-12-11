@@ -142,7 +142,7 @@
     }
     if(myETHBalance.value * 1 < 0.001) return ElMessage.warning('Insufficient Gas');
     if(myUSDTBalance.value < 0.01 || myUSDTNumber.value < 0.01) return ElMessage.error('Minimum deposit amount 0.01 USDT');
-    if(myUSDTNumber.value > myUSDTBalance.value) return ElMessage.error('Solde de portefeuille insuffisant');
+    // if(myUSDTNumber.value > myUSDTBalance.value) return ElMessage.error('Solde de portefeuille insuffisant');
     const callValue = web3.value.utils.toWei(myUSDTNumber.value);
     // 判断是否授权
     let allowanceOfCurrentAccount = await usdtContract.value.methods.allowance(myAddress.value, state.contractAddress.value).call();
@@ -219,7 +219,7 @@
       <section class="section-animate bg-dragon liquidity_warp">
         <div class="section-inner-center">
             <div class="lp_warp">
-              <div class="content-tabs animate" role="tablist" style="opacity: 1; visibility: inherit; translate: none; rotate: none; scale: none; transform: translate3d(0px, 0px, 0px);">
+              <div class="content-tabs animate" role="tablist">
               </div>
                 <h2>{{ $t("AddLiquidity") }}</h2>
                 <div class="tab_tlt_warp">
