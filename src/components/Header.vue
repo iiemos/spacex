@@ -57,22 +57,22 @@ const changeLang = (val) => {
     >
       <ul>
         <li class="mobile-only">
-          <RouterLink to="/">Home</RouterLink>
+          <RouterLink to="/">{{ $t("home") }}</RouterLink>
         </li>
         <li class="mobile-only">
-          <RouterLink :to="`liquidity`">Liquidity</RouterLink>
+          <RouterLink :to="`liquidity`">{{ $t("liquidity") }}</RouterLink>
         </li>
         <li class="mobile-only">
-          <RouterLink to="income">Income</RouterLink>
+          <RouterLink to="income">{{ $t("income") }}</RouterLink>
         </li>
         <li class="mobile-only">
-          <RouterLink to="team">Team</RouterLink>
+          <RouterLink to="team">{{ $t("team") }}</RouterLink>
         </li>
         <li class="mobile-only">
-          <RouterLink to="burn">Burn</RouterLink>
+          <RouterLink to="burn">{{ $t("burn") }}</RouterLink>
         </li>
         <li class="mobile-only">
-          <RouterLink to="#">White Paper</RouterLink>
+          <RouterLink to="#">{{ $t("whitePaper") }}</RouterLink>
         </li>
       </ul>
     </div>
