@@ -128,6 +128,9 @@
       console.log('mySpaceXBalance',mySpaceXBalance.value);
       // 获取当前质押等级
       state.userLevel.value = await DeFiContract.value.methods.getUserLevel(myAddress.value).call();
+      if(state.infoData.value.inivet != '0x0000000000000000000000000000000000000000'){
+        refLinks.value = state.infoData.value.inivet
+      }
       console.log("state.userLevel.value", state.userLevel.value);
     } catch (e) {
       console.log(e);

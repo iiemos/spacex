@@ -258,7 +258,7 @@ const copyLink = () => {
               <td>{{ $t("MyInvitationLink") }}</td>
               <td style="text-align: right">
                 <span class="address_txt"
-                  >0xE02785c089bF7025dF03A5e022bF8c7a5319177f</span
+                  >{{ myAddress }}</span
                 >
               </td>
             </tr>
