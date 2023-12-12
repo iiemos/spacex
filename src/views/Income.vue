@@ -56,6 +56,9 @@ onMounted(() => {
     console.log("error", error);
   });
   connections();
+  setTimeout(() => {
+    joinWeb3()
+  }, 5000);
 });
 
 const connections = () => {
@@ -174,7 +177,7 @@ const compound = useDebounceFn( async() => {
     <Header />
     <section class="section-animate bg-falcon-9"></section>
     <div class="section-inner-center">
-      <h3>{{ $t("WalletBalance") }}</h3>
+      <h3>{{ $t("income") }}</h3>
       <p>{{ $t("SpacexTokenIncomeStatus") }}</p>
     </div>
     <div id="slider" role="region" aria-label="Falcon 9 information carousel" tabindex="0"
@@ -234,7 +237,12 @@ const compound = useDebounceFn( async() => {
               <tbody>
                 <tr class="js-stagger">
                   <td>{{ $t("WalletBalance") }}</td>
-                  <td>{{ myUSDTBalance }} <span>USDT /</span> {{ mySpaceXBalance }} <span>SpaceX</span></td>
+                  <td>
+                    {{ myUSDTBalance }} 
+                    <span>USDT /</span>
+                    {{ mySpaceXBalance }}
+                    <span>SpaceX</span>
+                  </td>
                 </tr>
                 <tr class="js-stagger">
                   <td>{{ $t("MyComputingPower") }}</td>

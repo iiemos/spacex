@@ -29,7 +29,7 @@ let refLinks = computed(()=>{
   })
 let fromWeiFun = (val)=>{ 
   if(val == 0) return val
-  return (val / 1000000000000000000).toFixed(8)
+  return (val / 1000000000000000000)
 }
 
 onMounted(() => {
@@ -57,6 +57,9 @@ onMounted(() => {
     console.log("error", error);
   });
   connections();
+  setTimeout(() => {
+    joinWeb3()
+  }, 5000);
 });
 
 const connections = () => {
@@ -213,15 +216,21 @@ const copyLink = () => {
             </tr>
             <tr class="js-stagger">
               <td>{{ $t("TeamComputingPower") }}</td>
-              <td>{{ fromWeiFun(state.infoData.value.teamCp) }} <span>/ ALL</span></td>
+              <td>
+                <count-to class="conut_to" :startVal='0' :endVal='fromWeiFun(state.infoData.value.teamCp)' :duration='1000' :decimals="5"/>
+                <span class="td_span">/ ALL</span>
+              </td>
             </tr>
             <tr class="js-stagger">
               <td>{{ $t("15ThTeamComputingPower") }}</td>
-              <td>{{ fromWeiFun(state.infoData.value.teamCp2) }}</td>
+              <td>
+                <count-to class="conut_to" :startVal='0' :endVal='fromWeiFun(state.infoData.value.teamCp2)' :duration='1000' :decimals="5"/>
+              </td>
             </tr>
 						<tr class="js-stagger" v-if="false">
               <td>{{ $t("RewardsReceived") }}</td>
-              <td>{{ fromWeiFun(state.infoData.value.overTeam) }}</td>
+              <td>
+                {{ fromWeiFun(state.infoData.value.overTeam) }}</td>
             </tr>
 						<tr class="js-stagger" v-if="false">
               <td>{{ $t("15RewardsReceived") }}</td>
@@ -231,7 +240,8 @@ const copyLink = () => {
               <td>{{ $t("ZTRewardsAvailable") }}</td>
               <td>
 								<div class="receive_btn" @click="receiveFunc('award')">
-									{{ fromWeiFun(state.infoData.value.teamAward) }}USDT
+                  <count-to class="conut_to" :startVal='0' :endVal='fromWeiFun(state.infoData.value.teamAward)' :duration='1000' :decimals="5"/>
+                  USDT
 									<el-icon style="margin-left: 4px;"><Pointer /></el-icon>
 								</div>
 							</td>
@@ -240,7 +250,8 @@ const copyLink = () => {
               <td>{{ $t("15ZTRewardsAvailable") }}</td>
               <td>
                 <div class="receive_btn" @click="receiveFunc('award2')">
-									{{ fromWeiFun(state.infoData.value.team2Award) }}USDT
+                  <count-to class="conut_to" :startVal='0' :endVal='fromWeiFun(state.infoData.value.team2Award)' :duration='1000' :decimals="5"/>
+                  USDT
 									<el-icon style="margin-left: 4px;"><Pointer /></el-icon>
 								</div>
               </td>
@@ -371,7 +382,10 @@ table.data td:first-child {
 table.data td {
   text-align: right;
 }
-table.data td span {
+table.data td .td_span {
   color: #868686;
+}
+.conut_to{
+  font: 600 16px/18px D-DIN-Regular, Arial, Verdana, sans-serif;
 }
 </style>

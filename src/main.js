@@ -10,8 +10,9 @@ import 'element-plus/dist/index.css'
 import i18n from './i18n'
 import App from './App.vue'
 import router from './router'
+import countTo from 'vue3-count-to'
 
-window.EventEmitter = EventEmitter;
+window.EventEmitter = EventEmitter
 const app = createApp(App)
 
 import Header from './components/Header.vue'
@@ -21,6 +22,7 @@ app.use(ElementPlus)
 app
     .component('Footer', Footer)
     .component('Header', Header)
+app.use(countTo)
 app.use(createPinia())
 app.use(router)
 

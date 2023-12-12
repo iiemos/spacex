@@ -18,6 +18,7 @@
     "vue": "^3.3.4",
     "vue-i18n": "9",
     "vue-router": "^4.2.5",
+    "vue3-count-to": "^1.1.2",
     "web3": "^4.3.0"
   },
   "devDependencies": {
