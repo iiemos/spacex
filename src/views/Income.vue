@@ -108,6 +108,7 @@ const joinWeb3 = async () => {
       // 获取usdt余额
       let usdtBalance = await usdtContract.value.methods.balanceOf(myAddress.value).call();
       myUSDTBalance.value = web3.value.utils.fromWei(usdtBalance, "ether");
+      myUSDTBalance.value = Number(myUSDTBalance.value)
       console.log('usdtBalance',myUSDTBalance.value);
       // 创建spacex合约实例
       SpaceXContract.value = new web3.value.eth.Contract(usdtABI, state.infoData.value.spaceCoin);
@@ -115,6 +116,7 @@ const joinWeb3 = async () => {
       // 获取spacex余额
       let SpaceXBalance = await SpaceXContract.value.methods.balanceOf(myAddress.value).call();
       mySpaceXBalance.value = web3.value.utils.fromWei(SpaceXBalance, "ether");
+      mySpaceXBalance.value = Number(mySpaceXBalance.value)
       console.log('mySpaceXBalance',mySpaceXBalance.value);
       // 获取当前质押等级
       state.userLevel.value = await DeFiContract.value.methods.getUserLevel(myAddress.value).call();
@@ -243,7 +245,7 @@ const compound = useDebounceFn( async() => {
                       <span style="font-family: D-DIN-Regular"> USDT</span>
                     </p>
                     <p>
-                      <count-to class="conut_to" :startVal='0' :endVal='mySpaceXBalance' :duration='3000' :decimals="8"/>
+                      <count-to  class="conut_to" :startVal='0' :endVal='mySpaceXBalance + 0' :duration='3000' :decimals="8"/>
                       <span> SpaceX</span>
                     </p>
                   </td>
