@@ -150,6 +150,7 @@ const getClaimTeam = () => {
     })
     .once('receipt', res => {
       ElMessage.success(t('TransactionConfirmed'))
+      joinWeb3();
     })
     .then(res => {
 
@@ -172,6 +173,7 @@ const getClaimTeam2 = () => {
     })
     .once('receipt', res => {
       ElMessage.success(t('TransactionConfirmed'))
+      joinWeb3();
     })
     .then(res => {
 
