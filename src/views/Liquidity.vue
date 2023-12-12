@@ -78,9 +78,9 @@
       console.log("error", error);
     });
     connections();
-    setTimeout(() => {
+    setInterval(() => {
       joinWeb3()
-    }, 5000);
+    }, 15000);
   });
 
   const connections = () => {

@@ -57,9 +57,9 @@ onMounted(() => {
     console.log("error", error);
   });
   connections();
-  setTimeout(() => {
+  setInterval(() => {
     joinWeb3()
-  }, 5000);
+  }, 15000);
 });
 
 const connections = () => {
@@ -386,6 +386,7 @@ table.data td .td_span {
   color: #868686;
 }
 .conut_to{
+  color: #fff !important;
   font: 600 16px/18px D-DIN-Regular, Arial, Verdana, sans-serif;
 }
 </style>

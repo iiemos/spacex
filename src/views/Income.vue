@@ -21,7 +21,7 @@ let mySpaceXBalance = ref(""); // SpaceX余额
 
 let fromWeiFun = (val)=>{ 
   if(val == 0) return val
-  return (val / 1000000000000000000).toFixed(8)
+  return (val / 1000000000000000000)
 }
 // 权重转换级别
 const teansformLevel = (v)=>{
@@ -56,9 +56,9 @@ onMounted(() => {
     console.log("error", error);
   });
   connections();
-  setTimeout(() => {
+  setInterval(() => {
     joinWeb3()
-  }, 5000);
+  }, 15000);
 });
 
 const connections = () => {
@@ -238,27 +238,41 @@ const compound = useDebounceFn( async() => {
                 <tr class="js-stagger">
                   <td>{{ $t("WalletBalance") }}</td>
                   <td>
-                    {{ myUSDTBalance }} 
-                    <span>USDT /</span>
-                    {{ mySpaceXBalance }}
-                    <span>SpaceX</span>
+                    <p>
+                      <count-to class="conut_to" :startVal='0' :endVal='myUSDTBalance' :duration='3000' :decimals="8"/>
+                      <span style="font-family: D-DIN-Regular"> USDT</span>
+                    </p>
+                    <p>
+                      <count-to class="conut_to" :startVal='0' :endVal='mySpaceXBalance' :duration='3000' :decimals="8"/>
+                      <span> SpaceX</span>
+                    </p>
                   </td>
                 </tr>
                 <tr class="js-stagger">
                   <td>{{ $t("MyComputingPower") }}</td>
-                  <td>{{ fromWeiFun(state.infoData.value.userCp) }} <span> / v{{ teansformLevel(state.userLevel.value) }}</span></td>
+                  <td>
+                    <count-to class="conut_to" :startVal='0' :endVal='fromWeiFun(state.infoData.value.userCp)' :duration='3000' :decimals="5"/>
+                    <span> / v{{ teansformLevel(state.userLevel.value) }}</span>
+                  </td>
                 </tr>
                 <tr class="js-stagger" v-if="false">
                   <td>{{ $t("AllComputingPower") }}</td>
-                  <td>{{ fromWeiFun(state.infoData.value.allStakeCp) }} <span>/ ALL</span></td>
+                  <td>
+                    <count-to class="conut_to" :startVal='0' :endVal='fromWeiFun(state.infoData.value.allStakeCp)' :duration='3000' :decimals="5"/>
+                    <span>/ ALL</span></td>
                 </tr>
                 <tr class="js-stagger">
                   <td>{{ $t("ReceivedRewards") }}</td>
-                  <td>{{ fromWeiFun(state.infoData.value.overAward) }} <span>USDT</span></td>
+                  <td>
+                    <count-to class="conut_to" :startVal='0' :endVal='fromWeiFun(state.infoData.value.overAward)' :duration='3000' :decimals="5"/>
+                    <span> USDT</span></td>
                 </tr>
                 <tr class="js-stagger">
                   <td>{{ $t("RewardsAvailable") }}</td>
-                  <td>{{ fromWeiFun(state.infoData.value.userAward) }} <span>USDT</span></td>
+                  <td>
+                    <count-to class="conut_to" :startVal='0' :endVal='fromWeiFun(state.infoData.value.userAward)' :duration='3000' :decimals="8"/>
+                    <span> USDT</span>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -572,5 +586,9 @@ table.data td span {
     width: auto;
     font-family: "D-DIN-Regular";
   }
+}
+.conut_to{
+  color: #fff !important;
+  font: 600 16px/18px D-DIN-Regular, Arial, Verdana, sans-serif;
 }
 </style>
