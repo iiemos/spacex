@@ -240,7 +240,7 @@ const compound = useDebounceFn( async() => {
                   <td>{{ $t("MyComputingPower") }}</td>
                   <td>{{ fromWeiFun(state.infoData.value.userCp) }} <span> / v{{ teansformLevel(state.userLevel.value) }}</span></td>
                 </tr>
-                <tr class="js-stagger">
+                <tr class="js-stagger" v-if="false">
                   <td>{{ $t("AllComputingPower") }}</td>
                   <td>{{ fromWeiFun(state.infoData.value.allStakeCp) }} <span>/ ALL</span></td>
                 </tr>

@@ -4,6 +4,7 @@
   import { RouterLink, RouterView } from "vue-router";
   import { useStorage } from '@vueuse/core'
   // import Web3 from 'web3'
+  import { useI18n } from 'vue-i18n'
   import { useRouteQuery } from '@vueuse/router'
 	import IconUSDT from '@/components/icons/IconUSDT.vue'
 	import IconSpacex from '@/components/icons/IconSpacex.vue'
@@ -14,7 +15,8 @@
   import SpaceXABI from "@/abis/defiABI.json";
   import usdtABI from "@/abis/usdtABI.json";
   import lpABI from "@/abis/lpABI.json";
-
+  const { t } = useI18n()
+  console.log('i18n', t('ApprovalUSDTSuccess'))
 
   const tabsActive = ref(0)
   const myUSDTNumber = ref(0) // 添加的usdt数量
@@ -33,7 +35,6 @@
   let SpaceXContract = ref(""); // SpaceX合约实例
   let mySpaceXBalance = ref(""); // SpaceX余额
   let LPContract = ref(""); // LP合约实例
-
   const invites = useRouteQuery('invs')
   const refLinks = ref('')
   if(typeof(invites.value) == "undefined"){
@@ -149,8 +150,8 @@
     if(!myAddress.value || myAddress.value === '0x00000000000000000000000000000000deadbeef'){
       return joinWeb3()
     }
-    if(myETHBalance.value * 1 < 0.001) return ElMessage.warning('Insufficient Gas');
-    if(myUSDTBalance.value < 0.01 || myUSDTNumber.value < 0.01) return ElMessage.error('Minimum deposit amount 0.01 USDT');
+    if(myETHBalance.value * 1 < 0.001) return ElMessage.warning(t('gasError'));
+    if(myUSDTBalance.value < 0.01 || myUSDTNumber.value < 0.01) return ElMessage.error(t('USDTbalanceError'));
     // if(myUSDTNumber.value > myUSDTBalance.value) return ElMessage.error('Solde de portefeuille insuffisant');
     const callValue = web3.value.utils.toWei(myUSDTNumber.value);
     // 判断是否授权
@@ -159,10 +160,10 @@
     console.log('购买的数量',callValue);
     if(allowanceOfCurrentAccount == 0 || allowanceOfCurrentAccount < callValue){
       console.log('执行授权语句');
-      let defaultVal = web3.value.utils.toWei("10000000000", "ether");
+      let defaultVal = web3.value.utils.toWei("10000000000", "ether"); // 默认授权额度
       usdtContract.value.methods.approve(state.contractAddress.value , defaultVal).send({from: myAddress.value,gas:20000000}).then((receipt) => {
         console.log('Approval successful:1111', receipt);
-        ElMessage.success('Approval successful！')
+        ElMessage.success(t('approveSuccess'))
         console.log('授权之后执行转账语句....12312312.');
         if(DeFiContract.value){
           try{
@@ -182,11 +183,11 @@
               })
               .on('transactionHash', (hash)=>{
                 console.log(hash);
-                ElMessage.success('Transaction sent')
+                ElMessage.success(t('AddTransactionSent'))
                 console.log("Transaction sent");
               })
               .once('receipt', res => {
-                ElMessage.success('Transaction confirmed')
+                ElMessage.success(t('TransactionSuccess'))
                 console.log("Transaction confirmed");
                 myUSDTNumber.value = 0
                 joinWeb3();
@@ -199,7 +200,7 @@
       }).catch((error) => {
         console.error('Approval failed:', error.code);
         if(error.code == '-32603'){
-          ElMessage.error('GAS is low, please adjust the cost of GAS');
+          ElMessage.error(t('gasLow'));
         }
       });
 
@@ -224,11 +225,11 @@
             })
             .on('transactionHash', (hash)=>{
               console.log(hash);
-              ElMessage.success('Transaction sent')
+              ElMessage.success(t('AddTransactionSent'))
               console.log("Transaction sent");
             })
             .once('receipt', res => {
-              ElMessage.success('Transaction confirmed')
+              ElMessage.success(t('TransactionSuccess'))
               console.log("Transaction confirmed");
               myUSDTNumber.value = 0
               joinWeb3();
@@ -246,22 +247,74 @@
     if(!myAddress.value || myAddress.value === '0x00000000000000000000000000000000deadbeef'){
       return joinWeb3()
     }
-    if(myETHBalance.value * 1 < 0.001) return ElMessage.warning('Insufficient Gas');
-    if(myUSDTBalance.value < 0.01 || myUSDTNumber.value < 0.01) return ElMessage.error('Minimum deposit amount 0.01 BNB');
+    if(myETHBalance.value * 1 < 0.001) return ElMessage.warning(t('gasError'));
+    if(myUSDTBalance.value < 0.01 || myUSDTNumber.value < 0.01) return ElMessage.error(t('USDTbalanceError'));
     // 判断账户 USDT 余额是否充足
-    if(myUSDTNumber.value > myUSDTBalance.value) return ElMessage.error('Solde USDT Coin insuffisant');
-    if(addSpaceX.value > mySpaceXBalance.value) return ElMessage.error('Solde SpaceX Coin insuffisant');
-    const callValue = web3.value.utils.toWei(myUSDTNumber.value);
+    if(myUSDTNumber.value > myUSDTBalance.value) return ElMessage.error(t('USDTbalanceError'));
+    if(addSpaceX.value > mySpaceXBalance.value) return ElMessage.error(t('SpaceXbalanceError'));
     // 验证USDT是否授权
     let USDTofCurrentAccount = await usdtContract.value.methods.allowance(myAddress.value, state.LPAddress.value).call();
-    console.log('USDTofCurrentAccount',USDTofCurrentAccount);
+    console.log('USDT授权额度为：',USDTofCurrentAccount);
     // 验证SpaceX是否授权
     let SpaceXofCurrentAccount = await SpaceXContract.value.methods.allowance(myAddress.value, state.LPAddress.value).call();
-    console.log('SpaceXofCurrentAccount',SpaceXofCurrentAccount);
-
-    // LPContract.value
-
+    console.log('SpaceX授权额度为：',SpaceXofCurrentAccount);
+    if(USDTofCurrentAccount > 0 && SpaceXofCurrentAccount > 0){
+      console.log('执行LP添加语句');
+      if(LPContract.value){
+        try{
+          const callUSDTValue = web3.value.utils.toWei(myUSDTNumber.value); // 添加USDT金额
+          const callSpaceXValue = String(addSpaceX.value * 1000000000000000000); // 添加SpaceX金额
+          console.log('LP添加USDT数量:',callUSDTValue);
+          console.log('LP添加SpaceX数量:',callSpaceXValue);
+          LPContract.value.methods.addL(
+              callUSDTValue,
+              callSpaceXValue,
+            )
+            .send({
+              from: myAddress.value,
+            })
+            .on('transactionHash', (hash)=>{
+              console.log(hash);
+              ElMessage.success(t('AddTransactionSent'))
+              console.log("Transaction sent");
+            })
+            .once('receipt', res => {
+              ElMessage.success(t('TransactionSuccess'))
+              console.log("Transaction confirmed");
+              myUSDTNumber.value = 0
+              joinWeb3();
+            })
+            .catch(err => console.log(err))
+          }catch(e){
+            console.log(e);
+          }
+      }
+    }else{
+      approveLPfunc()
+    }
   })
+  // 授权LP合约
+  const approveLPfunc = ()=>{
+    let defaultVal = web3.value.utils.toWei("10000000000", "ether"); // 默认授权额度
+    usdtContract.value.methods.approve(state.LPAddress.value , defaultVal).send({from: myAddress.value,gas:20000000}).then((receipt) => {
+      console.log('组合流动性授权USDT成功：', receipt);
+      ElMessage.success(t('ApprovalUSDTSuccess'))
+    }).catch((error) => {
+      console.error('Approval failed:', error.code);
+      if(error.code == '-32603'){
+        ElMessage.error(t('gasLow'));
+      }
+    });
+    SpaceXContract.value.methods.approve(state.LPAddress.value , defaultVal).send({from: myAddress.value,gas:20000000}).then((receipt) => {
+      console.log('组合流动性授权SpaceX成功：', receipt);
+      ElMessage.success(t('ApprovalSpaceXSuccess'))
+    }).catch((error) => {
+      console.error('Approval failed:', error.code);
+      if(error.code == '-32603'){
+        ElMessage.error(t('gasLow'));
+      }
+    });
+  }
 
 </script>
 <template>

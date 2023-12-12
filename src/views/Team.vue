@@ -4,11 +4,13 @@ import { RouterLink, RouterView } from "vue-router";
 import { useGlobalState } from "@/store";
 import { useDebounceFn } from '@vueuse/core'
 // import Web3 from 'web3'
+import { useI18n } from 'vue-i18n'
 import { ElMessage } from "element-plus";
 import {
   Pointer,
 } from '@element-plus/icons-vue'
 import SpaceXABI from "@/abis/defiABI.json";
+const { t } = useI18n()
 const state = useGlobalState();
 console.log("state", state);
 let web3 = ref();
@@ -122,16 +124,16 @@ const receiveFunc = useDebounceFn((val) => {
   if(!myAddress.value || myAddress.value === '0x00000000000000000000000000000000deadbeef'){
     return joinWeb3()
   }
-  if(myETHBalance.value * 1 < 0.001) return ElMessage.warning('Insufficient Gas');
+  if(myETHBalance.value * 1 < 0.001) return ElMessage.warning(t('gasError'));
   
   // 直接推荐
   if(val == 'award'){
-    if(state.infoData.value.teamAward == '0') return ElMessage.warning('当前团队直推奖励为0，请确认后再进行操作！');
+    if(state.infoData.value.teamAward == '0') return ElMessage.warning(t('awardMsg'));
     getClaimTeam()
   }
   // 15代直推
   if(val == 'award2'){
-    if(state.infoData.value.team2Award == '0') return ElMessage.warning('当前15代推荐奖励为0，请确认后再进行操作！');
+    if(state.infoData.value.team2Award == '0') return ElMessage.warning(t('awardMsg'));
     getClaimTeam2()
   }
 }, 500)
@@ -144,10 +146,10 @@ const getClaimTeam = () => {
     })
     .on('transactionHash', (hash)=>{
       console.log(hash);
-      ElMessage.success('Transaction sent')
+      ElMessage.success(t('TransactionSend'))
     })
     .once('receipt', res => {
-      ElMessage.success("Transaction confirmed")
+      ElMessage.success(t('TransactionConfirmed'))
     })
     .then(res => {
 
@@ -166,10 +168,10 @@ const getClaimTeam2 = () => {
     })
     .on('transactionHash', (hash)=>{
       console.log(hash);
-      ElMessage.success('Transaction sent')
+      ElMessage.success(t('TransactionSend'))
     })
     .once('receipt', res => {
-      ElMessage.success("Transaction confirmed")
+      ElMessage.success(t('TransactionConfirmed'))
     })
     .then(res => {
 
@@ -186,7 +188,7 @@ const copyLink = () => {
     document.body.appendChild(_input)
     _input.select()
     document.execCommand('Copy')
-    ElMessage.success('Copied to clipboard')
+    ElMessage.success(t('copyInvSuccess'))
     _input.remove()
 };
 </script>
@@ -199,11 +201,11 @@ const copyLink = () => {
         <h2>{{ $t("myTeam") }}</h2>
         <table class="data additional-toggle" style="display: table">
           <tbody>
-            <tr class="js-stagger">
+            <tr class="js-stagger" v-if="false">
               <td>{{ $t("NumberOfDirectReferrals") }}</td>
               <td>{{ state.infoData.value.teamLength }}</td>
             </tr>
-            <tr class="js-stagger">
+            <tr class="js-stagger" v-if="false">
               <td>{{ $t("15NumberOfReferrals") }}</td>
 							<td>{{ state.infoData.value.team2Length }}</td>
             </tr>
@@ -215,11 +217,11 @@ const copyLink = () => {
               <td>{{ $t("15ThTeamComputingPower") }}</td>
               <td>{{ fromWeiFun(state.infoData.value.teamCp2) }}</td>
             </tr>
-						<tr class="js-stagger">
+						<tr class="js-stagger" v-if="false">
               <td>{{ $t("RewardsReceived") }}</td>
               <td>{{ fromWeiFun(state.infoData.value.overTeam) }}</td>
             </tr>
-						<tr class="js-stagger">
+						<tr class="js-stagger" v-if="false">
               <td>{{ $t("15RewardsReceived") }}</td>
               <td>{{ fromWeiFun(state.infoData.value.overTeam2) }}</td>
             </tr>
@@ -268,14 +270,17 @@ const copyLink = () => {
         <div class="ref_wrapper" v-if="teamArray.length > 0" @click="centerDialogVisible = true">
           <span class="text">{{ $t("ViewInvitationAddress") }}</span>
         </div>
-        <div class="ref_wrapper" @click="copyLink()">
+        <div class="ref_wrapper" @click="copyLink()" v-if="myAddress">
           <span class="text">{{ $t("CopyInvitationLink") }}</span>
+        </div>
+        <div class="ref_wrapper" @click="connections()" v-if="!myAddress">
+          <span class="text">{{ $t("ConnectWallet") }}</span>
         </div>
       </div>
     </div>
     <el-dialog
       v-model="centerDialogVisible"
-      title="invitation list"
+      :title="t('invitationList')"
       width="90%"
       align-center
     >
