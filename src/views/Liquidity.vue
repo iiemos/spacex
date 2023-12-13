@@ -30,6 +30,7 @@
   let infoData = ref(""); //我的地址
   let myETHBalance = ref(""); // EHT余额
   let myUSDTBalance = ref(""); // USDT余额
+  let pushAddress = ref(""); // 目标算力地址
   let DeFiContract = ref(""); // 合约实例
   let usdtContract = ref(""); // usdt合约实例
   let SpaceXContract = ref(""); // SpaceX合约实例
@@ -149,7 +150,7 @@
       console.log(e);
     }
   };
-  const addLiquidityFn = useDebounceFn( async(val) => {
+  const addLiquidityFn = useDebounceFn( async(clickVal) => {
     if(!myAddress.value || myAddress.value === '0x00000000000000000000000000000000deadbeef'){
       return joinWeb3()
     }
@@ -206,7 +207,6 @@
           ElMessage.error(t('gasLow'));
         }
       });
-
     }else{
       //执行转账语句
       console.log('执行转账语句');
@@ -245,8 +245,95 @@
     }
   }, 500)
 
-  const addZHFunc= useDebounceFn( async(val) => {
+  const addZuHeFunc= useDebounceFn( async(val) => {
+    if(!myAddress.value || myAddress.value === '0x00000000000000000000000000000000deadbeef'){
+      return joinWeb3()
+    }
+    if(myETHBalance.value * 1 < 0.001) return ElMessage.warning(t('gasError'));
+    if(myUSDTBalance.value < 0.01) return ElMessage.error(t('USDTbalanceError'));
+    if(myUSDTNumber.value < 0.01) return ElMessage.error(t('amountSmal'));
+    if(pushAddress.value == '')  return ElMessage.error(t('addressEmpty'));
+    if(myUSDTNumber.value > myUSDTBalance.value) return ElMessage.error(t('USDTbalanceError'));
+    if(addSpaceX.value > mySpaceXBalance.value) return ElMessage.error(t('SpaceXbalanceError'));
+    const callValue = web3.value.utils.toWei(myUSDTNumber.value);
+    const callSpaceXValue = addSpaceX.value * 1000000000000000000
+    // return
+    // 判断是否授权
+    let allowanceOfCurrentAccount = await usdtContract.value.methods.allowance(myAddress.value, state.contractAddress.value).call();
+    console.log('被授权的数量：',allowanceOfCurrentAccount);
+    console.log('购买的数量',callValue);
 
+    // 验证USDT是否授权
+    let USDTofCurrentAccount = await usdtContract.value.methods.allowance(myAddress.value, state.contractAddress.value).call();
+    console.log('USDT授权额度为：',USDTofCurrentAccount);
+    // 验证SpaceX是否授权
+    let SpaceXDeFiAccount = await SpaceXContract.value.methods.allowance(myAddress.value, state.contractAddress.value).call();
+    console.log('SpaceX授权额度为：',SpaceXDeFiAccount);
+
+
+    if(allowanceOfCurrentAccount == 0 || SpaceXDeFiAccount == 0 || allowanceOfCurrentAccount < callValue || SpaceXDeFiAccount < callSpaceXValue){
+      console.log('执行授权语句');
+      let defaultVal = web3.value.utils.toWei("10000000000", "ether"); // 默认授权额度
+      if(allowanceOfCurrentAccount == 0 || allowanceOfCurrentAccount < callValue){
+        usdtContract.value.methods.approve(state.contractAddress.value , defaultVal).send({from: myAddress.value,gas:20000000}).then((receipt) => {
+          console.log('Approval successful:1111', receipt);
+          ElMessage.success(t('approveSuccess'))
+          console.log('授权之后执行转账语句....12312312.');
+        }).catch((error) => {
+          console.error('Approval failed:', error.code);
+          if(error.code == '-32603'){
+            ElMessage.error(t('gasLow'));
+          }
+        });
+      }
+      if( SpaceXDeFiAccount == 0 || SpaceXDeFiAccount < callSpaceXValue){
+        SpaceXContract.value.methods.approve(state.contractAddress.value , defaultVal).send({from: myAddress.value,gas:20000000}).then((receipt) => {
+          console.log('Approval successful:1111', receipt);
+          ElMessage.success(t('approveSuccess'))
+          console.log('授权多币SpaceX 之后执行转账语句....12312312.');
+        }).catch((error) => {
+          console.error('Approval failed:', error.code);
+          if(error.code == '-32603'){
+            ElMessage.error(t('gasLow'));
+          }
+        });
+      }
+    }else{
+      //执行转账语句
+      console.log('执行转账语句');
+      if(DeFiContract.value){
+        try{
+          const mode = 2; // 模式
+          console.log('邀请链接:',refLinks.value);
+          console.log('收益地址:',pushAddress.value);
+          console.log('mode:',mode);
+          console.log('购买金额:',callValue);
+            DeFiContract.value.methods.stake(
+              refLinks.value,
+              pushAddress.value,
+              mode,
+              callValue
+            )
+            .send({
+              from: myAddress.value,
+            })
+            .on('transactionHash', (hash)=>{
+              console.log(hash);
+              ElMessage.success(t('AddTransactionSent'))
+              console.log("Transaction sent");
+            })
+            .once('receipt', res => {
+              ElMessage.success(t('TransactionSuccess'))
+              console.log("Transaction confirmed");
+              myUSDTNumber.value = 0
+              joinWeb3();
+            })
+            .catch(err => console.log(err))
+          }catch(e){
+            console.log(e);
+          }
+      }
+    }
   },500)
 
 
@@ -391,13 +478,30 @@
                               {{ addSpaceX }}
                             </td>
                         </tr>
+                        <tr class="js-stagger" v-if="tabsActive != 1">
+                            <td >
+                              <div class="coin_box">
+                                Address
+                              </div>
+                            </td>
+                            <td style="text-align: right; padding: 20px 0;">
+                              <el-tooltip
+                                class="box-item"
+                                effect="dark"
+                                :content="state.infoData.value.inivet"
+                                placement="top-end"
+                              >
+                              <input class="address_txt" type="text" style="width: 100%" v-model="pushAddress">
+                              </el-tooltip>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
             <div class="add_liquidity" @click="addLiquidityFn()"  v-if="tabsActive ==1">
 			        <span class="text">{{ $t("personalBoost") }}</span>
 		        </div>
-            <div class="add_liquidity" @click="addLiquidityFn2()" v-if="tabsActive ==2">
+            <div class="add_liquidity" @click="addZuHeFunc()" v-if="tabsActive ==2">
 			        <span class="text">{{ $t("AddLiquidity") }}</span>
 		        </div>
         </div>

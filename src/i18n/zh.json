@@ -69,5 +69,7 @@
     "TransactionSend": "交易已发送!",
     "TransactionConfirmed": "交易已确认！",
     "WalletLinkSuccess": "链接钱包成功！",
+    "amountSmal": "添加数额太小，请重新输入！",
+    "addressEmpty": "地址不能为空",
     "invitationList": "邀请列表"
 }

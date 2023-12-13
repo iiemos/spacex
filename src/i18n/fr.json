@@ -69,5 +69,7 @@
     "TransactionSend": "Transaction envoyée!",
     "TransactionConfirmed": "Transaction confirmée !",
     "WalletLinkSuccess": "Lien de portefeuille réussi !",
+    "amountSmal": "Le montant est trop petit, veuillez le saisir à nouveau",
+    "addressEmpty": "L'adresse ne peut pas être vide",
     "invitationList": "Liste d'invitations"
 }

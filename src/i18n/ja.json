@@ -69,5 +69,7 @@
     "awardMsg": "現在の収入は0です、操作する前に確認してください！",
     "TransactionConfirmed": "お取引確認しました！",
     "WalletLinkSuccess": "ウォレットリンクが成功しました！",
+    "amountSmal": "金額が少なすぎるため、再入力してください",
+    "addressEmpty": "アドレスを空にすることはできません",
     "invitationList": "招待リスト"
 }

@@ -70,5 +70,7 @@
     "TransactionSend": "Transaction sent!",
     "TransactionConfirmed": "Transaction confirmed!",
     "WalletLinkSuccess": "Wallet link successful!",
+    "amountSmal": "The amount is too small, please re-enter",
+    "addressEmpty": "Address cannot be empty",
     "invitationList": "invitation list"
 }
