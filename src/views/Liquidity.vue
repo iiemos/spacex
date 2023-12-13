@@ -18,7 +18,7 @@
   const { t } = useI18n()
   console.log('i18n', t('ApprovalUSDTSuccess'))
 
-  const tabsActive = ref(0)
+  const tabsActive = ref(1)
   const myUSDTNumber = ref(0) // 添加的usdt数量
   let addSpaceX = computed((d)=>{  // 动态计算添加的SpaceX数量
     return Number(myUSDTNumber.value) * 1.94433333333333
@@ -245,6 +245,13 @@
     }
   }, 500)
 
+  const addZHFunc= useDebounceFn( async(val) => {
+
+  },500)
+
+
+
+
   const addLiquidityFn2 = useDebounceFn( async(val) => {
     console.log('addSpaceX',addSpaceX.value);
     if(!myAddress.value || myAddress.value === '0x00000000000000000000000000000000deadbeef'){
@@ -295,7 +302,15 @@
     }else{
       approveLPfunc()
     }
-  })
+  }, 500)
+  
+  // 投入授权USDT
+  const approveUSDT = () =>{
+    // 判断是否授权
+    // let allowanceOfCurrentAccount = await usdtContract.value.methods.allowance(myAddress.value, state.contractAddress.value).call();
+    // console.log('被授权的数量：',allowanceOfCurrentAccount);
+  }
+  // 投入授权SpaceX
   // 授权LP合约
   const approveLPfunc = ()=>{
     let defaultVal = web3.value.utils.toWei("10000000000", "ether"); // 默认授权额度
@@ -330,11 +345,11 @@
               </div>
                 <h2>{{ $t("AddLiquidity") }}</h2>
                 <div class="tab_tlt_warp">
-                  <div class="tab_tlt_item" :class="{active : tabsActive == 0}" @click="changeTabs(0)">
+                  <div class="tab_tlt_item" :class="{active : tabsActive == 1}" @click="changeTabs(1)">
                     USDT
                   </div>
                   <span>|</span> 
-                  <div class="tab_tlt_item" :class="{active : tabsActive == 1}" @click="changeTabs(1)">
+                  <div class="tab_tlt_item" :class="{active : tabsActive == 2}" @click="changeTabs(2)">
                     USDT + SpaceX
                   </div>
                 </div>
@@ -366,7 +381,7 @@
                                 <input type="text" v-model="myUSDTNumber">
                             </td>
                         </tr>
-                        <tr class="js-stagger" v-if="tabsActive !=0">
+                        <tr class="js-stagger" v-if="tabsActive != 1">
                             <td >
                               <div class="coin_box">
                                 <IconSpacex class="lp_icon" /> SpaceX
@@ -379,10 +394,10 @@
                     </tbody>
                 </table>
             </div>
-            <div class="add_liquidity" @click="addLiquidityFn()"  v-if="tabsActive ==0">
+            <div class="add_liquidity" @click="addLiquidityFn()"  v-if="tabsActive ==1">
 			        <span class="text">{{ $t("personalBoost") }}</span>
 		        </div>
-            <div class="add_liquidity" @click="addLiquidityFn2()" v-if="tabsActive ==1">
+            <div class="add_liquidity" @click="addLiquidityFn2()" v-if="tabsActive ==2">
 			        <span class="text">{{ $t("AddLiquidity") }}</span>
 		        </div>
         </div>
