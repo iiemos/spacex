@@ -1,6 +1,6 @@
 
 <script setup>
-  import { ref, computed, onMounted } from "vue";
+  import { ref, computed, onMounted, watch } from "vue";
   import { RouterLink, RouterView } from "vue-router";
   import { useStorage } from '@vueuse/core'
   // import Web3 from 'web3'
@@ -20,9 +20,23 @@
 
   const tabsActive = ref(1)
   const myUSDTNumber = ref(0) // 添加的usdt数量
-  let addSpaceX = computed((d)=>{  // 动态计算添加的SpaceX数量
+  let addSpaceX = computed((d)=>{  // 动态计算算力添加的SpaceX数量
     return Number(myUSDTNumber.value) * 1.94433333333333
   })
+
+  const AddLpUsdtNumber = ref(0) // 添加流动性usdt数量
+  let spaceCoinPrice = ref(0); // SpaceX实时价格（1USDT）
+  let LPSpaceX = ref(0); // SpaceX实时价格（1USDT）
+
+  // 监听LP添加usdt的变化，更新SpaceX的值
+  watch(AddLpUsdtNumber, (newValue) => {
+    LPSpaceX.value = Number(newValue) * spaceCoinPrice.value
+  });
+
+  // // 监听LP添加SpaceX的变化，更新usdt的值
+  watch(LPSpaceX, (newValue) => {
+    AddLpUsdtNumber.value = Number(newValue) / spaceCoinPrice.value
+  });
 
   const state = useGlobalState();
   let web3 = ref();
@@ -38,6 +52,8 @@
   let LPContract = ref(""); // LP合约实例
   const invites = useRouteQuery('invs')
   const refLinks = ref('')
+  const activeName = ref('first') // tabs 选中的名称
+  
   if(typeof(invites.value) == "undefined"){
     refLinks.value = '0xDA02d522d8cd60de0a2F9773f80b16Fc9ED99bdd'
   }else{
@@ -102,17 +118,13 @@
   };
   const joinWeb3 = async () => {
     let eth_chainId = web3.value.eth.getChainId();
-    console.log("eth_chainId", eth_chainId);
     let accounts = await web3.value.eth.getAccounts();
-    console.log("查询eth_chainId", eth_chainId);
     // 请求用户授权 解决web3js无法直接唤起Meta Mask获取用户身份
     const enable = await ethereum.enable();
-    console.log("enable", enable[0]);
     // // 授权获取账户
     // 返回指定地址账户的余额
     let balance = await web3.value.eth.getBalance(enable[0]);
     myAddress.value = accounts[0];
-    console.log("balance", balance);
     try {
       // 创建合约实例
       DeFiContract.value = new web3.value.eth.Contract(SpaceXABI,state.contractAddress.value);
@@ -144,6 +156,10 @@
       if(state.infoData.value.inivet != '0x0000000000000000000000000000000000000000'){
         refLinks.value = state.infoData.value.inivet
       }
+      // 获取LP实时价格 getPrice
+      const SpaceXPrice = await DeFiContract.value.methods.getPrice(state.infoData.value.spaceCoin).call();
+      spaceCoinPrice.value = web3.value.utils.fromWei(SpaceXPrice, "ether");
+      console.log('实时价格为：' ,spaceCoinPrice.value);
       // 创建 lpABI 实例
       LPContract.value = new web3.value.eth.Contract(lpABI, state.LPAddress.value);
     } catch (e) {
@@ -340,29 +356,29 @@
 
 
   const addLiquidityFn2 = useDebounceFn( async(val) => {
-    console.log('addSpaceX',addSpaceX.value);
+    console.log('LPSpaceX',LPSpaceX.value);
     if(!myAddress.value || myAddress.value === '0x00000000000000000000000000000000deadbeef'){
       return joinWeb3()
     }
     if(myETHBalance.value * 1 < 0.001) return ElMessage.warning(t('gasError'));
-    if(myUSDTBalance.value < 0.01 || myUSDTNumber.value < 0.01) return ElMessage.error(t('USDTbalanceError'));
+    if(myUSDTBalance.value < 0.01 || AddLpUsdtNumber.value < 0.01) return ElMessage.error(t('USDTbalanceError'));
     // 判断账户 USDT 余额是否充足
-    if(myUSDTNumber.value > myUSDTBalance.value) return ElMessage.error(t('USDTbalanceError'));
-    if(addSpaceX.value > mySpaceXBalance.value) return ElMessage.error(t('SpaceXbalanceError'));
+    if(AddLpUsdtNumber.value > myUSDTBalance.value) return ElMessage.error(t('USDTbalanceError'));
+    if(LPSpaceX.value > mySpaceXBalance.value) return ElMessage.error(t('SpaceXbalanceError'));
     // 验证USDT是否授权
     let USDTofCurrentAccount = await usdtContract.value.methods.allowance(myAddress.value, state.LPAddress.value).call();
     console.log('USDT授权额度为：',USDTofCurrentAccount);
     // 验证SpaceX是否授权
     let SpaceXofCurrentAccount = await SpaceXContract.value.methods.allowance(myAddress.value, state.LPAddress.value).call();
     console.log('SpaceX授权额度为：',SpaceXofCurrentAccount);
-    if(USDTofCurrentAccount > 0 && SpaceXofCurrentAccount > 0){
+    const callUSDTValue =  String(AddLpUsdtNumber.value * 1000000000000000000); // 添加USDT金额
+    const callSpaceXValue = String(LPSpaceX.value * 1000000000000000000); // 添加SpaceX金额
+    console.log('LP添加USDTss数量:',callUSDTValue, '购买数量是否大于授权数量',USDTofCurrentAccount > Number(callUSDTValue));
+    console.log('LP添加SpaceX数量:',callSpaceXValue, '购买数量是否大于授权数量' ,SpaceXofCurrentAccount > callSpaceXValue);
+    if(USDTofCurrentAccount > Number(callUSDTValue) && SpaceXofCurrentAccount > Number(callSpaceXValue)){
       console.log('执行LP添加语句');
       if(LPContract.value){
         try{
-          const callUSDTValue = web3.value.utils.toWei(myUSDTNumber.value); // 添加USDT金额
-          const callSpaceXValue = String(addSpaceX.value * 1000000000000000000); // 添加SpaceX金额
-          console.log('LP添加USDT数量:',callUSDTValue);
-          console.log('LP添加SpaceX数量:',callSpaceXValue);
           LPContract.value.methods.addL(
               callUSDTValue,
               callSpaceXValue,
@@ -378,7 +394,8 @@
             .once('receipt', res => {
               ElMessage.success(t('TransactionSuccess'))
               console.log("Transaction confirmed");
-              myUSDTNumber.value = 0
+              AddLpUsdtNumber.value = 0
+              LPSpaceX.value = 0
               joinWeb3();
             })
             .catch(err => console.log(err))
@@ -420,44 +437,115 @@
       }
     });
   }
-
+  const handleClick = (tab, event) =>{
+  }
 </script>
 <template>
     <div class="home">
       <Header />
       <section class="section-animate bg-dragon liquidity_warp">
-        <div class="section-inner-center">
-            <div class="lp_warp"> 
-              <div class="content-tabs animate" role="tablist">
+        <div class="section-inner-center lp_inner">
+          <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
+            <el-tab-pane :label="t('liquidity')" name="first">
+              <div class="lp_warp"> 
+                <div class="content-tabs animate" role="tablist">
+                </div>
+                  <div class="tab_tlt_warp">
+                    <div class="tab_tlt_item" :class="{active : tabsActive == 1}" @click="changeTabs(1)">
+                      USDT
+                    </div>
+                    <span>|</span> 
+                    <div class="tab_tlt_item" :class="{active : tabsActive == 2}" @click="changeTabs(2)">
+                      USDT + SpaceX
+                    </div>
+                  </div>
+                  <div class="my_balance_box">
+                    <div>
+                      {{ $t("WalletBalance") }}：
+                    </div>
+                    <div>
+                      <div style="text-align: right;">
+                        {{ toFixed8(myETHBalance) }} BNB 
+                      </div>
+                      <div style="text-align: right;">
+                        {{ toFixed8(myUSDTBalance) }} USDT
+                      </div>
+                      <div style="text-align: right;">
+                        {{ toFixed8(mySpaceXBalance) }} SpaceX
+                      </div>
+                    </div>
+                  </div>
+                  <table class="data additional-toggle" style="display: table">
+                      <tbody >
+                          <tr class="js-stagger">
+                              <td >
+                                <div class="coin_box">
+                                  <IconUSDT class="lp_icon" /> USDT
+                                </div>
+                              </td>
+                              <td >
+                                  <input type="text" v-model="myUSDTNumber">
+                              </td>
+                          </tr>
+                          <tr class="js-stagger" v-if="tabsActive != 1">
+                              <td >
+                                <div class="coin_box">
+                                  <IconSpacex class="lp_icon" /> SpaceX
+                                </div>
+                              </td>
+                              <td style="padding: 20px 0;">
+                                {{ addSpaceX }}
+                              </td>
+                          </tr>
+                          <tr class="js-stagger" v-if="tabsActive != 1">
+                              <td >
+                                <div class="coin_box">
+                                  Address
+                                </div>
+                              </td>
+                              <td style="text-align: right; padding: 20px 0;">
+                                <el-tooltip
+                                  class="box-item"
+                                  effect="dark"
+                                  :content="state.infoData.value.inivet"
+                                  placement="top-end"
+                                >
+                                <input class="address_txt" type="text" style="width: 100%" v-model="pushAddress">
+                                </el-tooltip>
+                              </td>
+                          </tr>
+                      </tbody>
+                  </table>
               </div>
-                <h2>{{ $t("AddLiquidity") }}</h2>
-                <div class="tab_tlt_warp">
-                  <div class="tab_tlt_item" :class="{active : tabsActive == 1}" @click="changeTabs(1)">
-                    USDT
-                  </div>
-                  <span>|</span> 
-                  <div class="tab_tlt_item" :class="{active : tabsActive == 2}" @click="changeTabs(2)">
-                    USDT + SpaceX
-                  </div>
+              <div class="add_liquidity" @click="addLiquidityFn()"  v-if="tabsActive ==1">
+                <span class="text">{{ $t("personalBoost") }}</span>
+              </div>
+              <div class="add_liquidity" @click="addZuHeFunc()" v-if="tabsActive ==2">
+                <span class="text">{{ $t("AddLiquidity") }}</span>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane :label="t('liudongxing')" name="second">
+              <div class="lp_warp"> 
+                <div class="content-tabs animate" role="tablist">
                 </div>
-                <div class="my_balance_box">
-                  <div>
-                    {{ $t("WalletBalance") }}：
+                  <div class="my_balance_box">
+                    <div>
+                      {{ $t("WalletBalance") }}：
+                    </div>
+                    <div>
+                      <div style="text-align: right;">
+                        {{ toFixed8(myETHBalance) }} BNB 
+                      </div>
+                      <div style="text-align: right;">
+                        {{ toFixed8(myUSDTBalance) }} USDT
+                      </div>
+                      <div style="text-align: right;">
+                        {{ toFixed8(mySpaceXBalance) }} SpaceX
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <div style="text-align: right;">
-                      {{ toFixed8(myETHBalance) }} BNB 
-                    </div>
-                    <div style="text-align: right;">
-                      {{ toFixed8(myUSDTBalance) }} USDT
-                    </div>
-                    <div style="text-align: right;">
-                      {{ toFixed8(mySpaceXBalance) }} SpaceX
-                    </div>
-                  </div>
-                </div>
-                <table class="data additional-toggle" style="display: table">
-                    <tbody >
+                  <table class="data additional-toggle" style="display: table">
+                      <tbody >
                         <tr class="js-stagger">
                             <td >
                               <div class="coin_box">
@@ -465,58 +553,67 @@
                               </div>
                             </td>
                             <td >
-                                <input type="text" v-model="myUSDTNumber">
+                              <input type="text" v-model="AddLpUsdtNumber">
                             </td>
                         </tr>
-                        <tr class="js-stagger" v-if="tabsActive != 1">
+                        <tr class="js-stagger">
                             <td >
                               <div class="coin_box">
                                 <IconSpacex class="lp_icon" /> SpaceX
                               </div>
                             </td>
                             <td style="padding: 20px 0;">
-                              {{ addSpaceX }}
+                              <input type="text" v-model="LPSpaceX">
                             </td>
                         </tr>
-                        <tr class="js-stagger" v-if="tabsActive != 1">
-                            <td >
-                              <div class="coin_box">
-                                Address
-                              </div>
-                            </td>
-                            <td style="text-align: right; padding: 20px 0;">
-                              <el-tooltip
-                                class="box-item"
-                                effect="dark"
-                                :content="state.infoData.value.inivet"
-                                placement="top-end"
-                              >
-                              <input class="address_txt" type="text" style="width: 100%" v-model="pushAddress">
-                              </el-tooltip>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="add_liquidity" @click="addLiquidityFn()"  v-if="tabsActive ==1">
-			        <span class="text">{{ $t("personalBoost") }}</span>
-		        </div>
-            <div class="add_liquidity" @click="addZuHeFunc()" v-if="tabsActive ==2">
-			        <span class="text">{{ $t("AddLiquidity") }}</span>
-		        </div>
+                      </tbody>
+                  </table>
+                  <div class="add_liquidity" @click="addLiquidityFn2()">
+                    <span class="text">{{ $t('addliudongxing') }}</span>
+                  </div>
+              </div>
+            </el-tab-pane>
+          </el-tabs>
         </div>
       </section>
       <Footer />
     </div>
   </template>
   
+<style>
+.el-tabs__item{
+  color: rgba(255,255,255,.6);
+}
+.el-tabs__item.is-active{
+  color: #fff;
+  font-weight: bold;
+}
+.el-tabs__item:hover{
+  color: #fff;
+}
+.el-tabs__active-bar{
+  background-color: #fff;
+}
+.el-tabs__nav-wrap::after{
+  background-color: rgba(255,255,255,.6);
+}
+</style>
   <style lang="less" scoped>
+  .lp_inner{
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    width: 100%;
+    max-width: 100%;
+    padding: 20vh 20px 0 20px;
+  }
   .my_balance_box{
     display: flex;
     justify-content: space-between;
     padding: 20px 0;
     font-family: D-DIN-Bold;
-    border-bottom: 1px solid #fff;
+    border-bottom: 1px solid #ffffff75;
   }
   .tab_tlt_warp{
     display: flex;
@@ -537,9 +634,9 @@
     }
   }
   .liquidity_warp{
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    // display: flex;
+    // align-items: center;
+    // justify-content: center;
   }
   .lp_warp{
     h2{
