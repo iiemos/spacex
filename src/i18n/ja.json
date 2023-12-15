@@ -73,5 +73,6 @@
     "WalletLinkSuccess": "ウォレットリンクが成功しました！",
     "amountSmal": "金額が少なすぎるため、再入力してください",
     "addressEmpty": "アドレスを空にすることはできません",
+    "refLinksError": "招待リンクのアドレスを空にすることはできません。招待リンクを再度取得してください。",
     "invitationList": "招待リスト"
 }

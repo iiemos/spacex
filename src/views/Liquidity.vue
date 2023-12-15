@@ -210,6 +210,7 @@
         if(DeFiContract.value){
           try{
             const mode = 1; // 模式
+            if(refLinks.value == 'undefined' || !refLinks.value) return ElMessage.warning(t('refLinksError')) 
             console.log('邀请链接:',refLinks.value);
             console.log('收益地址:',myAddress.value);
             console.log('mode:',mode);

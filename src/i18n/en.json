@@ -74,5 +74,6 @@
     "WalletLinkSuccess": "Wallet link successful!",
     "amountSmal": "The amount is too small, please re-enter",
     "addressEmpty": "Address cannot be empty",
+    "refLinksError": "The invitation link address cannot be empty, please obtain the invitation link again.",
     "invitationList": "invitation list"
 }

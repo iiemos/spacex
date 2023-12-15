@@ -73,5 +73,6 @@
     "WalletLinkSuccess": "链接钱包成功！",
     "amountSmal": "添加数额太小，请重新输入！",
     "addressEmpty": "地址不能为空",
+    "refLinksError": "邀请链接地址不能为空，请重新获取邀请链接",
     "invitationList": "邀请列表"
 }
