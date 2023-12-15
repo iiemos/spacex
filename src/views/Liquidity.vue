@@ -12,9 +12,11 @@
   import { useDebounceFn } from '@vueuse/core'
   import { ElMessage } from "element-plus";
   import { Pointer } from '@element-plus/icons-vue'
-  import SpaceXABI from "@/abis/defiABI.json";
+  import defiABI from "@/abis/defiABI.json";
   import usdtABI from "@/abis/usdtABI.json";
+  import spaceXABI from "@/abis/spaceABI.json";
   import lpABI from "@/abis/lpABI.json";
+  import cakeLpABI from "@/abis/cakeLpABI.json";
   const { t } = useI18n()
   console.log('i18n', t('ApprovalUSDTSuccess'))
 
@@ -48,11 +50,14 @@
   let DeFiContract = ref(""); // 合约实例
   let usdtContract = ref(""); // usdt合约实例
   let SpaceXContract = ref(""); // SpaceX合约实例
+  let lpPairContract = ref(""); // lp流动性合约实例
   let mySpaceXBalance = ref(""); // SpaceX余额
   let LPContract = ref(""); // LP合约实例
   const invites = useRouteQuery('invs')
   const refLinks = ref('')
   const activeName = ref('first') // tabs 选中的名称
+  const myLpBalance = ref(0) // 流动性总余额
+  const myLpTotleBalance = ref(0) // 我的流动性余额
   
   if(typeof(invites.value) == "undefined"){
     refLinks.value = '0xDA02d522d8cd60de0a2F9773f80b16Fc9ED99bdd'
@@ -127,7 +132,7 @@
     myAddress.value = accounts[0];
     try {
       // 创建合约实例
-      DeFiContract.value = new web3.value.eth.Contract(SpaceXABI,state.contractAddress.value);
+      DeFiContract.value = new web3.value.eth.Contract(defiABI,state.contractAddress.value);
       console.log('DeFiContract.value ',DeFiContract.value );
       // 获取合约中返回的信息
       infoData.value = await DeFiContract.value.methods.getInfo(myAddress.value).call();
@@ -145,8 +150,8 @@
       myUSDTBalance.value = web3.value.utils.fromWei(usdtBalance, "ether");
       console.log('usdtBalance',myUSDTBalance.value);
       // 创建spacex合约实例
-      SpaceXContract.value = new web3.value.eth.Contract(usdtABI, state.infoData.value.spaceCoin);
-      console.log('usdtContract.value',SpaceXContract.value);
+      SpaceXContract.value = new web3.value.eth.Contract(spaceXABI, state.infoData.value.spaceCoin);
+      console.log('SpaceXContract.value',SpaceXContract.value);
       // 获取spacex余额
       let SpaceXBalance = await SpaceXContract.value.methods.balanceOf(myAddress.value).call();
       mySpaceXBalance.value = web3.value.utils.fromWei(SpaceXBalance, "ether");
@@ -156,11 +161,23 @@
       if(state.infoData.value.inivet != '0x0000000000000000000000000000000000000000'){
         refLinks.value = state.infoData.value.inivet
       }
+      
       // 获取LP实时价格 getPrice
       const SpaceXPrice = await DeFiContract.value.methods.getPrice(state.infoData.value.spaceCoin).call();
       spaceCoinPrice.value = web3.value.utils.fromWei(SpaceXPrice, "ether");
       console.log('实时价格为：' ,spaceCoinPrice.value);
-      // 创建 lpABI 实例
+      // 获取_pair() LP的地址然后使用BALANCEOF函数拿到LP数量即可
+      const lp_pair = await SpaceXContract.value.methods._pair().call();
+      // 创建查询流动性组合合约实例
+      lpPairContract.value = new web3.value.eth.Contract(cakeLpABI, lp_pair);
+      const my_lp_balanceOf  = await lpPairContract.value.methods.balanceOf(myAddress.value).call();
+      const lp_balanceOf = await SpaceXContract.value.methods.balanceOf(lp_pair).call();
+      myLpBalance.value = web3.value.utils.fromWei(my_lp_balanceOf, "ether");
+      myLpTotleBalance.value = web3.value.utils.fromWei(lp_balanceOf, "ether");
+      console.log('LP 流动性地址为：',lp_pair);
+      console.log('LP 流动性总数量：',myLpTotleBalance.value);
+      console.log('我的LP 流动性数量：',myLpBalance.value);
+      // 创建 增删流动性 实例
       LPContract.value = new web3.value.eth.Contract(lpABI, state.LPAddress.value);
     } catch (e) {
       console.log(e);
@@ -365,14 +382,15 @@
     // 判断账户 USDT 余额是否充足
     if(AddLpUsdtNumber.value > myUSDTBalance.value) return ElMessage.error(t('USDTbalanceError'));
     if(LPSpaceX.value > mySpaceXBalance.value) return ElMessage.error(t('SpaceXbalanceError'));
+    if(LPSpaceX.value < 0.01) return ElMessage.error(t('amountSmal'));
     // 验证USDT是否授权
     let USDTofCurrentAccount = await usdtContract.value.methods.allowance(myAddress.value, state.LPAddress.value).call();
     console.log('USDT授权额度为：',USDTofCurrentAccount);
     // 验证SpaceX是否授权
     let SpaceXofCurrentAccount = await SpaceXContract.value.methods.allowance(myAddress.value, state.LPAddress.value).call();
     console.log('SpaceX授权额度为：',SpaceXofCurrentAccount);
-    const callUSDTValue =  String(AddLpUsdtNumber.value * 1000000000000000000); // 添加USDT金额
-    const callSpaceXValue = String(LPSpaceX.value * 1000000000000000000); // 添加SpaceX金额
+    const callUSDTValue =  web3.value.utils.toWei(AddLpUsdtNumber.value.toString());// 添加USDT金额
+    const callSpaceXValue = web3.value.utils.toWei(LPSpaceX.value.toString());// 添加USDT金额
     console.log('LP添加USDTss数量:',callUSDTValue, '购买数量是否大于授权数量',USDTofCurrentAccount > Number(callUSDTValue));
     console.log('LP添加SpaceX数量:',callSpaceXValue, '购买数量是否大于授权数量' ,SpaceXofCurrentAccount > callSpaceXValue);
     if(USDTofCurrentAccount > Number(callUSDTValue) && SpaceXofCurrentAccount > Number(callSpaceXValue)){
@@ -439,6 +457,60 @@
   }
   const handleClick = (tab, event) =>{
   }
+  const removeLPfun = useDebounceFn( async(val) => {
+    // lpPairContract
+    let allowanceOfCurrentAccount = await lpPairContract.value.methods.allowance(myAddress.value, state.LPAddress.value).call();
+    console.log('移除流动性被授权的数量：',allowanceOfCurrentAccount);
+    const removeValue = web3.value.utils.toWei(myLpBalance.value);
+    let defaultVal = web3.value.utils.toWei("10000000000", "ether"); // 默认授权额度
+    if(allowanceOfCurrentAccount < defaultVal){
+      // lpPairContract.value = new web3.value.eth.Contract(cakeLpABI, lp_pair);
+      // const my_lp_balanceOf  = await lpPairContract.value.methods.balanceOf(myAddress.value).call();
+
+      lpPairContract.value.methods.approve(state.LPAddress.value , removeValue).send({from: myAddress.value,gas:20000000}).then((receipt) => {
+        console.log('流动性授权成功：', receipt);
+        ElMessage.success(t('ApprovalUSDTSuccess'))
+      }).catch((error) => {
+        console.error('Approval failed:', error.code);
+        if(error.code == '-32603'){
+          ElMessage.error(t('gasLow'));
+        }
+      });
+    }else{
+      if(LPContract.value){
+          try{
+           
+            console.log('removeValue1123123123122222',removeValue,allowanceOfCurrentAccount);
+            LPContract.value.methods.removeL(
+              removeValue,
+              )
+              .send({
+                from: myAddress.value,
+              })
+              .on('transactionHash', (hash)=>{
+                console.log(hash);
+                ElMessage.success(t('TransactionSend'))
+                console.log("Transaction sent");
+              })
+              .once('receipt', res => {
+                ElMessage.success(t('TransactionConfirmed'))
+                console.log("Transaction confirmed");
+                AddLpUsdtNumber.value = 0
+                LPSpaceX.value = 0
+                joinWeb3();
+              })
+              .catch((error) => {
+                console.error('Approval failed:', error.code);
+                if(error.code == '-32603'){
+                  ElMessage.error(t('gasLow'));
+                }
+              });
+            }catch(e){
+              console.log(e);
+            }
+        }
+    }
+  },500)
 </script>
 <template>
     <div class="home">
@@ -484,7 +556,7 @@
                                 </div>
                               </td>
                               <td >
-                                  <input type="text" v-model="myUSDTNumber">
+                                  <input type="number" v-model="myUSDTNumber">
                               </td>
                           </tr>
                           <tr class="js-stagger" v-if="tabsActive != 1">
@@ -544,6 +616,30 @@
                       </div>
                     </div>
                   </div>
+                  <div class="my_ldx_box" v-if="myLpBalance > 0">
+                    <div class="my_ldx_box_tlt">
+                      您钱包中的LP代币
+                      <div class="remove_btn" @click="removeLPfun()">
+                        移除
+                      </div>
+                    </div>
+                    <div class="my_ldx_box_item">
+                      <div>
+                        USDT-SpaceX
+                      </div>
+                      <div>
+                        {{ toFixed8(myLpBalance) }} 
+                      </div>
+                    </div>
+                    <div class="my_ldx_box_item">
+                      <div>
+                        交易对中的份额：
+                      </div>
+                      <div>
+                        {{ toFixed8((myLpBalance / myLpTotleBalance)*100) }}% 
+                      </div>
+                    </div>
+                  </div>
                   <table class="data additional-toggle" style="display: table">
                       <tbody >
                         <tr class="js-stagger">
@@ -553,7 +649,7 @@
                               </div>
                             </td>
                             <td >
-                              <input type="text" v-model="AddLpUsdtNumber">
+                              <input type="number" v-model="AddLpUsdtNumber">
                             </td>
                         </tr>
                         <tr class="js-stagger">
@@ -563,7 +659,7 @@
                               </div>
                             </td>
                             <td style="padding: 20px 0;">
-                              <input type="text" v-model="LPSpaceX">
+                              <input type="number" v-model="LPSpaceX">
                             </td>
                         </tr>
                       </tbody>
@@ -614,6 +710,28 @@
     padding: 20px 0;
     font-family: D-DIN-Bold;
     border-bottom: 1px solid #ffffff75;
+  }
+  .my_ldx_box{
+    text-align: left;
+    font-family: D-DIN-Bold;
+    border-bottom: 1px solid #ffffff75;
+  }
+  .my_ldx_box_tlt{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+  }
+  .my_ldx_box_item{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .remove_btn{
+    border: 1px solid #fff;
+    display: inline-block;
+    margin-top: 4px;
+    padding: 2px 20px;
   }
   .tab_tlt_warp{
     display: flex;
