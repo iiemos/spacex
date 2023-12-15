@@ -279,7 +279,12 @@
               myUSDTNumber.value = 0
               joinWeb3();
             })
-            .catch(err => console.log(err))
+            .catch((error) => {
+              console.error('Approval failed:', error.code);
+              if(error.code == '-32603'){
+                ElMessage.error(t('gasLow'));
+              }
+            });
           }catch(e){
             console.log(e);
           }
@@ -372,7 +377,12 @@
               myUSDTNumber.value = 0
               joinWeb3();
             })
-            .catch(err => console.log('111111111111111',err))
+            .catch((error) => {
+              console.error('Approval failed:', error.code);
+              if(error.code == '-32603'){
+                ElMessage.error(t('gasLow'));
+              }
+            });
           }catch(e){
             console.log(e);
           }

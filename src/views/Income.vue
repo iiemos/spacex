@@ -144,7 +144,12 @@ const withdraw = useDebounceFn( async() => {
       console.log("Transaction confirmed");
       joinWeb3();
     })
-    .catch(err => console.log(err))
+    .catch((error) => {
+        console.error('Approval failed:', error.code);
+        if(error.code == '-32603'){
+          ElMessage.error(t('gasLow'));
+        }
+      });
   }catch(e){
     console.log(e);
   }

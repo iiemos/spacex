@@ -158,7 +158,12 @@ const getClaimTeam = () => {
     .then(res => {
 
     })
-    .catch(err => console.log(err))
+    .catch((error) => {
+        console.error('failed:', error.code);
+        if(error.code == '-32603'){
+          ElMessage.error(t('gasLow'));
+        }
+      });
   }catch(e){
     console.log(e);
   }
@@ -181,7 +186,12 @@ const getClaimTeam2 = () => {
     .then(res => {
 
     })
-    .catch(err => console.log(err))
+    .catch((error) => {
+        console.error('failed:', error.code);
+        if(error.code == '-32603'){
+          ElMessage.error(t('gasLow'));
+        }
+      });
   }catch(e){
     console.log(e);
   }
