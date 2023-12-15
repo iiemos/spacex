@@ -194,6 +194,7 @@
     }
     if(myETHBalance.value * 1 < 0.001) return ElMessage.warning(t('gasError'));
     if(myUSDTBalance.value < 0.01 || myUSDTNumber.value < 0.01) return ElMessage.error(t('USDTbalanceError'));
+    if(refLinks.value == 'undefined' || !refLinks.value) return ElMessage.warning(t('refLinksError')) 
     // if(myUSDTNumber.value > myUSDTBalance.value) return ElMessage.error('Solde de portefeuille insuffisant');
     const callValue = web3.value.utils.toWei(myUSDTNumber.value.toString());
     // 判断是否授权
@@ -210,7 +211,6 @@
         if(DeFiContract.value){
           try{
             const mode = 1; // 模式
-            if(refLinks.value == 'undefined' || !refLinks.value) return ElMessage.warning(t('refLinksError')) 
             console.log('邀请链接:',refLinks.value);
             console.log('收益地址:',myAddress.value);
             console.log('mode:',mode);
