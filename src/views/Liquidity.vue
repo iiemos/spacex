@@ -23,7 +23,7 @@
   const tabsActive = ref(1)
   const myUSDTNumber = ref(0) // 添加的usdt数量
   let addSpaceX = computed((d)=>{  // 动态计算算力添加的SpaceX数量
-    return Number(myUSDTNumber.value) * 1.94433333333333
+    return Number(myUSDTNumber.value) * spaceCoinPrice.value
   })
 
   const AddLpUsdtNumber = ref(0) // 添加流动性usdt数量
@@ -190,7 +190,7 @@
     if(myETHBalance.value * 1 < 0.001) return ElMessage.warning(t('gasError'));
     if(myUSDTBalance.value < 0.01 || myUSDTNumber.value < 0.01) return ElMessage.error(t('USDTbalanceError'));
     // if(myUSDTNumber.value > myUSDTBalance.value) return ElMessage.error('Solde de portefeuille insuffisant');
-    const callValue = web3.value.utils.toWei(myUSDTNumber.value);
+    const callValue = web3.value.utils.toWei(myUSDTNumber.value.toString());
     // 判断是否授权
     let allowanceOfCurrentAccount = await usdtContract.value.methods.allowance(myAddress.value, state.contractAddress.value).call();
     console.log('被授权的数量：',allowanceOfCurrentAccount);
@@ -228,8 +228,12 @@
                 console.log("Transaction confirmed");
                 myUSDTNumber.value = 0
                 joinWeb3();
-              })
-              .catch(err => console.log(err))
+              }).catch((error) => {
+                console.error('Approval failed:', error.code);
+                if(error.code == '-32603'){
+                  ElMessage.error(t('gasLow'));
+                }
+              });
             }catch(e){
               console.log(e);
             }
@@ -288,14 +292,15 @@
     if(pushAddress.value == '')  return ElMessage.error(t('addressEmpty'));
     if(myUSDTNumber.value > myUSDTBalance.value) return ElMessage.error(t('USDTbalanceError'));
     if(addSpaceX.value > mySpaceXBalance.value) return ElMessage.error(t('SpaceXbalanceError'));
-    const callValue = web3.value.utils.toWei(myUSDTNumber.value);
-    const callSpaceXValue = addSpaceX.value * 1000000000000000000
+    const callValue = web3.value.utils.toWei(myUSDTNumber.value.toString());
+    const callSpaceXValue = web3.value.utils.toWei(addSpaceX.value.toString());
     // return
     // 判断是否授权
     let allowanceOfCurrentAccount = await usdtContract.value.methods.allowance(myAddress.value, state.contractAddress.value).call();
     console.log('被授权的数量：',allowanceOfCurrentAccount);
     console.log('购买的数量',callValue);
-
+    478899676444231700
+    1063780310010340688
     // 验证USDT是否授权
     let USDTofCurrentAccount = await usdtContract.value.methods.allowance(myAddress.value, state.contractAddress.value).call();
     console.log('USDT授权额度为：',USDTofCurrentAccount);
@@ -303,11 +308,12 @@
     let SpaceXDeFiAccount = await SpaceXContract.value.methods.allowance(myAddress.value, state.contractAddress.value).call();
     console.log('SpaceX授权额度为：',SpaceXDeFiAccount);
 
-
-    if(allowanceOfCurrentAccount == 0 || SpaceXDeFiAccount == 0 || allowanceOfCurrentAccount < callValue || SpaceXDeFiAccount < callSpaceXValue){
+    console.log('组合添加USDT数量:',callValue, '购买数量是否大于授权数量',allowanceOfCurrentAccount > Number(callValue));
+    console.log('组合添加SpaceX数量:',callSpaceXValue, '购买数量是否大于授权数量' ,SpaceXDeFiAccount > Number(callSpaceXValue));
+    if(allowanceOfCurrentAccount == 0 || SpaceXDeFiAccount == 0 || allowanceOfCurrentAccount < Number(callValue) || SpaceXDeFiAccount < Number(callSpaceXValue)){
       console.log('执行授权语句');
       let defaultVal = web3.value.utils.toWei("10000000000", "ether"); // 默认授权额度
-      if(allowanceOfCurrentAccount == 0 || allowanceOfCurrentAccount < callValue){
+      if(allowanceOfCurrentAccount == 0 || allowanceOfCurrentAccount < Number(callValue)){
         usdtContract.value.methods.approve(state.contractAddress.value , defaultVal).send({from: myAddress.value,gas:20000000}).then((receipt) => {
           console.log('Approval successful:1111', receipt);
           ElMessage.success(t('approveSuccess'))
@@ -319,7 +325,7 @@
           }
         });
       }
-      if( SpaceXDeFiAccount == 0 || SpaceXDeFiAccount < callSpaceXValue){
+      if( SpaceXDeFiAccount == 0 || SpaceXDeFiAccount < Number(callSpaceXValue)){
         SpaceXContract.value.methods.approve(state.contractAddress.value , defaultVal).send({from: myAddress.value,gas:20000000}).then((receipt) => {
           console.log('Approval successful:1111', receipt);
           ElMessage.success(t('approveSuccess'))
@@ -361,7 +367,7 @@
               myUSDTNumber.value = 0
               joinWeb3();
             })
-            .catch(err => console.log(err))
+            .catch(err => console.log('111111111111111',err))
           }catch(e){
             console.log(e);
           }
@@ -415,8 +421,12 @@
               AddLpUsdtNumber.value = 0
               LPSpaceX.value = 0
               joinWeb3();
-            })
-            .catch(err => console.log(err))
+            }).catch((error) => {
+              console.error('Approval failed:', error.code);
+              if(error.code == '-32603'){
+                ElMessage.error(t('gasLow'));
+              }
+            });
           }catch(e){
             console.log(e);
           }
@@ -461,7 +471,7 @@
     // lpPairContract
     let allowanceOfCurrentAccount = await lpPairContract.value.methods.allowance(myAddress.value, state.LPAddress.value).call();
     console.log('移除流动性被授权的数量：',allowanceOfCurrentAccount);
-    const removeValue = web3.value.utils.toWei(myLpBalance.value);
+    const removeValue = web3.value.utils.toWei(myLpBalance.value.toString());
     let defaultVal = web3.value.utils.toWei("10000000000", "ether"); // 默认授权额度
     if(allowanceOfCurrentAccount < defaultVal){
       // lpPairContract.value = new web3.value.eth.Contract(cakeLpABI, lp_pair);
@@ -579,7 +589,7 @@
                                 <el-tooltip
                                   class="box-item"
                                   effect="dark"
-                                  :content="state.infoData.value.inivet"
+                                  :content="pushAddress"
                                   placement="top-end"
                                 >
                                 <input class="address_txt" type="text" style="width: 100%" v-model="pushAddress">
