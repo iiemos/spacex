@@ -23,10 +23,15 @@
   const tabsActive = ref(1)
   const myUSDTNumber = ref(0) // 添加的usdt数量
   let addSpaceX = computed((d)=>{  // 动态计算算力添加的SpaceX数量
-    return Number(myUSDTNumber.value) * spaceCoinPrice.value
+    // return (Number(myUSDTNumber.value)/ 0.3 * 0.194333333333333333) / spaceCoinPrice.value
+    return (Number(myUSDTNumber.value)/ 0.3 * 0.5833) * spaceCoinPrice.value
+    // return Number(myUSDTNumber.value) * spaceCoinPrice.value
   })
 
-  const AddLpUsdtNumber = ref(0) // 添加流动性usdt数量
+  // 0.1U 
+  // 0.194333333333333333 SpaceX
+  
+   const AddLpUsdtNumber = ref(0) // 添加流动性usdt数量
   let spaceCoinPrice = ref(0); // SpaceX实时价格（1USDT）
   let LPSpaceX = ref(0); // SpaceX实时价格（1USDT）
 
