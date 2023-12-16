@@ -225,7 +225,12 @@ section {
 .section-f {
   background-image: url('./img/section-f.jpg');
 }
-
+.section-moon {
+  background-image: url('./img/moon.jpeg');
+}
+.section-mars {
+  background-image: url('./img/huoxing.jpeg');
+}
 .btn {
   position: relative;
   display: inline-block;

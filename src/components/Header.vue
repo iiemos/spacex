@@ -74,6 +74,12 @@ const changeLang = (val) => {
           <RouterLink :to="`burn?invs=${invites}`">{{ $t("burn") }}</RouterLink>
         </li>
         <li class="mobile-only">
+          <RouterLink :to="`ecology?invs=${invites}`">{{ $t("Ecology") }}</RouterLink>
+        </li>
+        <li class="mobile-only">
+          <RouterLink :to="`introduction?invs=${invites}`">{{ $t("Introduction") }}</RouterLink>
+        </li>
+        <li class="mobile-only">
           <RouterLink :to="`/?invs=${invites}`">{{ $t("whitePaper") }}</RouterLink>
         </li>
       </ul>
@@ -112,6 +118,12 @@ const changeLang = (val) => {
           </li>
           <li>
             <RouterLink :to="`burn?invs=${invites}`">{{ $t("burn") }}</RouterLink>
+          </li>
+          <li>
+            <RouterLink :to="`ecology?invs=${invites}`">{{ $t("Ecology") }}</RouterLink>
+          </li>
+          <li>
+            <RouterLink :to="`introduction?invs=${invites}`">{{ $t("Introduction") }}</RouterLink>
           </li>
           <li>
             <RouterLink :to="`/?invs=${invites}`">{{ $t("whitePaper") }}</RouterLink>

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { RouterLink, RouterView } from "vue-router";
 import { useGlobalState } from "@/store";
 import { useDebounceFn } from '@vueuse/core'
@@ -18,7 +18,16 @@ let usdtContract = ref(""); // usdt合约实例
 let myUSDTBalance = ref(""); // USDT余额
 let SpaceXContract = ref(""); // SpaceX合约实例
 let mySpaceXBalance = ref(""); // SpaceX余额
+let spaceCoinPrice = ref(""); // SpaceX实时价格
+// let yuedengSpaceX = ref(""); // USDT对应的SpaceX数量
 
+// 监听LP添加usdt的变化，更新SpaceX的值
+// watch(spaceCoinPrice, (newValue) => {
+//   yuedengSpaceX.value = Number(state.infoData.value.userAward) * newValue
+// });
+const USDTtransFormSpaceXCoin = (val) => {
+  return (Number(val) * spaceCoinPrice.value / 1000000000000000000).toFixed(3)
+}
 let fromWeiFun = (val)=>{ 
   if(val == 0) return val
   return (val / 1000000000000000000)
@@ -121,6 +130,11 @@ const joinWeb3 = async () => {
       // 获取当前质押等级
       state.userLevel.value = await DeFiContract.value.methods.getUserLevel(myAddress.value).call();
       console.log("state.userLevel.value", state.userLevel.value);
+
+      // 获取LP实时价格 getPrice
+      const SpaceXPrice = await DeFiContract.value.methods.getPrice(state.infoData.value.spaceCoin).call();
+      spaceCoinPrice.value = web3.value.utils.fromWei(SpaceXPrice, "ether");
+      console.log('实时价格为：' ,spaceCoinPrice.value);
     } catch (e) {
       console.log(e);
     }
@@ -271,14 +285,29 @@ const compound = useDebounceFn( async() => {
                 <tr class="js-stagger">
                   <td>{{ $t("ReceivedRewards") }}</td>
                   <td>
-                    <count-to class="conut_to" :startVal='0' :endVal='fromWeiFun(state.infoData.value.overAward)' :duration='3000' :decimals="5"/>
-                    <span> USDT</span></td>
+                    <div>
+                      <count-to class="conut_to" :startVal='0' :endVal='fromWeiFun(state.infoData.value.overAward)' :duration='3000' :decimals="5"/>
+                      <span> USDT</span>
+                    </div>
+                    <div>
+                      <span>
+                        ~ {{ USDTtransFormSpaceXCoin(state.infoData.value.overAward) }} SpaceX
+                      </span>
+                    </div>
+                  </td>
                 </tr>
                 <tr class="js-stagger">
                   <td>{{ $t("RewardsAvailable") }}</td>
                   <td>
-                    <count-to class="conut_to" :startVal='0' :endVal='fromWeiFun(state.infoData.value.userAward)' :duration='3000' :decimals="8"/>
-                    <span> USDT</span>
+                    <div>
+                      <count-to class="conut_to" :startVal='0' :endVal='fromWeiFun(state.infoData.value.userAward)' :duration='3000' :decimals="8"/>
+                      <span> USDT</span>
+                    </div>
+                    <div>
+                      <span>
+                        ~ {{ USDTtransFormSpaceXCoin(state.infoData.value.userAward) }} SpaceX
+                      </span>
+                    </div>
                   </td>
                 </tr>
               </tbody>

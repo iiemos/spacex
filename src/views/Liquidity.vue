@@ -9,7 +9,7 @@
 	import IconUSDT from '@/components/icons/IconUSDT.vue'
 	import IconSpacex from '@/components/icons/IconSpacex.vue'
   import { useGlobalState } from "@/store";
-  import { useDebounceFn } from '@vueuse/core'
+  import { useDebounceFn,computedAsync } from '@vueuse/core'
   import { ElMessage } from "element-plus";
   import { Pointer } from '@element-plus/icons-vue'
   import defiABI from "@/abis/defiABI.json";
@@ -19,21 +19,37 @@
   import cakeLpABI from "@/abis/cakeLpABI.json";
   const { t } = useI18n()
   console.log('i18n', t('ApprovalUSDTSuccess'))
-
+  const addSpaceX = ref(0) // 
   const tabsActive = ref(1)
   const myUSDTNumber = ref(0) // 添加的usdt数量
-  let addSpaceX = computed((d)=>{  // 动态计算算力添加的SpaceX数量
-    // return (Number(myUSDTNumber.value)/ 0.3 * 0.194333333333333333) / spaceCoinPrice.value
-    return (Number(myUSDTNumber.value)/ 0.3 * 0.5833) * spaceCoinPrice.value
-    // return Number(myUSDTNumber.value) * spaceCoinPrice.value
-  })
-
+  // let addSpaceX = computed(async (d)=>{  // 动态计算算力添加的SpaceX数量
+  //   // return (Number(myUSDTNumber.value)/ 0.3 * 0.194333333333333333) / spaceCoinPrice.value
+  //   if(myUSDTNumber.value == 0) return
+  //   const resPrice = await getPriceFun((Number(myUSDTNumber.value)/ 0.3 * 0.5833))
+  //   console.log('resPrice',resPrice);
+  //    return 0
+  //   // return (Number(myUSDTNumber.value)/ 0.3 * 0.5833) * spaceCoinPrice.value
+  //   // return Number(myUSDTNumber.value) * spaceCoinPrice.value
+  // })
+  // const addSpaceX = computedAsync(
+  //   async () => {
+  //     if(myUSDTNumber.value == 0) return 0
+  //     return await getPriceFun((Number(myUSDTNumber.value)/ 0.3 * 0.5833))
+  //   },
+  //   null, // initial state
+  // )
+  // 监听LP添加usdt的变化，更新SpaceX的值
+  watch(myUSDTNumber, (newValue) => {
+    if(newValue == 0) return addSpaceX.value = 0
+    getPriceFun((Number(newValue)/ 0.3 * 0.5833))
+  });
   // 0.1U 
   // 0.194333333333333333 SpaceX
   
    const AddLpUsdtNumber = ref(0) // 添加流动性usdt数量
   let spaceCoinPrice = ref(0); // SpaceX实时价格（1USDT）
   let LPSpaceX = ref(0); // SpaceX实时价格（1USDT）
+
 
   // 监听LP添加usdt的变化，更新SpaceX的值
   watch(AddLpUsdtNumber, (newValue) => {
@@ -537,6 +553,17 @@
         }
     }
   },500)
+  // getPrice2
+  const getPriceFun = useDebounceFn( async(val) => {
+    console.log('val----------------',val);
+    const toWeiVal = web3.value.utils.toWei(val.toString());
+    // 获取组合添加算力实时价格 getPrice
+    const SpaceXPrice2 = await DeFiContract.value.methods.getPrice2(toWeiVal).call();
+    const spaceCoinPric2 = web3.value.utils.fromWei(SpaceXPrice2, "ether");
+    console.log('实时价格为12312312312：' ,spaceCoinPric2);
+    addSpaceX.value = spaceCoinPric2
+  },500)
+
 </script>
 <template>
     <div class="home">
@@ -645,9 +672,9 @@
                   <div class="my_ldx_box" v-if="myLpBalance > 0">
                     <div class="my_ldx_box_tlt">
                       您钱包中的LP代币
-                      <div class="remove_btn" @click="removeLPfun()">
+                      <!-- <div class="remove_btn" @click="removeLPfun()">
                         移除
-                      </div>
+                      </div> -->
                     </div>
                     <div class="my_ldx_box_item">
                       <div>
@@ -692,6 +719,9 @@
                   </table>
                   <div class="add_liquidity" @click="addLiquidityFn2()">
                     <span class="text">{{ $t('addliudongxing') }}</span>
+                  </div>
+                  <div  v-if="myLpBalance > 0" class="add_liquidity" @click="removeLPfun()">
+                    <span class="text">{{ $t('removeLiudongxing') }}</span>
                   </div>
               </div>
             </el-tab-pane>
@@ -741,6 +771,7 @@
     text-align: left;
     font-family: D-DIN-Bold;
     border-bottom: 1px solid #ffffff75;
+    padding-bottom: 10px;
   }
   .my_ldx_box_tlt{
     display: flex;
@@ -749,6 +780,7 @@
     padding: 10px 0;
   }
   .my_ldx_box_item{
+    padding: 4px 0;
     display: flex;
     align-items: center;
     justify-content: space-between;

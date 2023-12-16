@@ -20,6 +20,11 @@ let myETHBalance = ref(""); // EHT余额
 let DeFiContract = ref(""); // 合约实例
 let teamArray = ref([]); // 合约实例
 const centerDialogVisible = ref(false)
+let spaceCoinPrice = ref(""); // SpaceX实时价格
+
+const USDTtransFormSpaceXCoin = (val) => {
+  return (Number(val) * spaceCoinPrice.value / 1000000000000000000).toFixed(3)
+}
 
 let refLinks = computed(()=>{ 
     if(myAddress.value){
@@ -110,6 +115,14 @@ const joinWeb3 = async () => {
     console.log("state.userLevel.value", state.userLevel.value);
     // userLevel
     console.log("state", state.infoData.value);
+
+
+    // 获取LP实时价格 getPrice
+    const SpaceXPrice = await DeFiContract.value.methods.getPrice(state.infoData.value.spaceCoin).call();
+    spaceCoinPrice.value = web3.value.utils.fromWei(SpaceXPrice, "ether");
+    console.log('实时价格为：' ,spaceCoinPrice.value);
+
+
     // 获取直推地址列表
     if(state.infoData.value.teamLength>0){
       let teamData = await DeFiContract.value.methods
@@ -250,8 +263,17 @@ const copyLink = () => {
               <td>{{ $t("ZTRewardsAvailable") }}</td>
               <td>
 								<div class="receive_btn" @click="receiveFunc('award')">
-                  <count-to class="conut_to" :startVal='0' :endVal='fromWeiFun(state.infoData.value.teamAward)' :duration='1000' :decimals="5"/>
-                  USDT
+                  <div class="receive_box">
+                    <div>
+                      <count-to class="conut_to" :startVal='0' :endVal='fromWeiFun(state.infoData.value.teamAward)' :duration='3000' :decimals="5"/>
+                      <span> USDT</span>
+                    </div>
+                    <div class="transfrom_text">
+                      <span>
+                        ~ {{ USDTtransFormSpaceXCoin(state.infoData.value.teamAward) }} SpaceX
+                      </span>
+                    </div>
+                  </div>
 									<el-icon style="margin-left: 4px;"><Pointer /></el-icon>
 								</div>
 							</td>
@@ -260,8 +282,17 @@ const copyLink = () => {
               <td>{{ $t("15ZTRewardsAvailable") }}</td>
               <td>
                 <div class="receive_btn" @click="receiveFunc('award2')">
-                  <count-to class="conut_to" :startVal='0' :endVal='fromWeiFun(state.infoData.value.team2Award)' :duration='1000' :decimals="5"/>
-                  USDT
+                  <div class="receive_box">
+                    <div>
+                      <count-to class="conut_to" :startVal='0' :endVal='fromWeiFun(state.infoData.value.team2Award)' :duration='3000' :decimals="5"/>
+                      <span> USDT</span>
+                    </div>
+                    <div class="transfrom_text">
+                      <span>
+                        ~ {{ USDTtransFormSpaceXCoin(state.infoData.value.team2Award) }} SpaceX
+                      </span>
+                    </div>
+                   </div>
 									<el-icon style="margin-left: 4px;"><Pointer /></el-icon>
 								</div>
               </td>
@@ -358,6 +389,11 @@ const copyLink = () => {
 	align-items: center;
 	justify-content: end;
 	font: 600 16px/18px D-DIN-Regular, Arial, Verdana, sans-serif;
+}
+.receive_box{
+  .transfrom_text{
+    color: #868686;
+  }
 }
 .ref_wrapper {
 }
