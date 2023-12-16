@@ -64,13 +64,13 @@
   watch(myUSDTNumber, (newValue) => {
     if(!newValue || newValue == 0) myAddCpuPower.value = 0
     if(newValue == 0) return addSpaceX.value = 0
-    myAddCpuPower.value = newValue / 2.5
+    myAddCpuPower.value = newValue * 2.5
     getPriceFun((Number(newValue)/ 0.3 * 0.5833))
   });
 
   watch(myAddCpuPower, (newValue) => {
     if(!newValue || newValue == 0) myUSDTNumber.value = 0
-    myUSDTNumber.value = newValue * 2.5
+    myUSDTNumber.value = newValue / 2.5
   });
   
    const AddLpUsdtNumber = ref(0) // 添加流动性usdt数量
