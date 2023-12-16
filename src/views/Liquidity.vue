@@ -38,28 +38,6 @@
   //   },
   //   null, // initial state
   // )
-  // 监听LP添加usdt的变化，更新SpaceX的值
-  watch(myUSDTNumber, (newValue) => {
-    if(newValue == 0) return addSpaceX.value = 0
-    getPriceFun((Number(newValue)/ 0.3 * 0.5833))
-  });
-  // 0.1U 
-  // 0.194333333333333333 SpaceX
-  
-   const AddLpUsdtNumber = ref(0) // 添加流动性usdt数量
-  let spaceCoinPrice = ref(0); // SpaceX实时价格（1USDT）
-  let LPSpaceX = ref(0); // SpaceX实时价格（1USDT）
-
-
-  // 监听LP添加usdt的变化，更新SpaceX的值
-  watch(AddLpUsdtNumber, (newValue) => {
-    LPSpaceX.value = Number(newValue) * spaceCoinPrice.value
-  });
-
-  // // 监听LP添加SpaceX的变化，更新usdt的值
-  watch(LPSpaceX, (newValue) => {
-    AddLpUsdtNumber.value = Number(newValue) / spaceCoinPrice.value
-  });
 
   const state = useGlobalState();
   let web3 = ref();
@@ -79,7 +57,39 @@
   const activeName = ref('first') // tabs 选中的名称
   const myLpBalance = ref(0) // 流动性总余额
   const myLpTotleBalance = ref(0) // 我的流动性余额
+  const myAddCpuPower = ref(0) // 加入添加的算力
   
+
+  // 监听LP添加usdt的变化，更新SpaceX的值
+  watch(myUSDTNumber, (newValue) => {
+    if(!newValue || newValue == 0) myAddCpuPower.value = 0
+    if(newValue == 0) return addSpaceX.value = 0
+    myAddCpuPower.value = newValue / 2.5
+    getPriceFun((Number(newValue)/ 0.3 * 0.5833))
+  });
+
+  watch(myAddCpuPower, (newValue) => {
+    if(!newValue || newValue == 0) myUSDTNumber.value = 0
+    myUSDTNumber.value = newValue * 2.5
+  });
+  
+   const AddLpUsdtNumber = ref(0) // 添加流动性usdt数量
+  let spaceCoinPrice = ref(0); // SpaceX实时价格（1USDT）
+  let LPSpaceX = ref(0); // SpaceX实时价格（1USDT）
+
+
+  // 监听LP添加usdt的变化，更新SpaceX的值
+  watch(AddLpUsdtNumber, (newValue) => {
+    LPSpaceX.value = Number(newValue) * spaceCoinPrice.value
+  });
+
+  // // 监听LP添加SpaceX的变化，更新usdt的值
+  watch(LPSpaceX, (newValue) => {
+    AddLpUsdtNumber.value = Number(newValue) / spaceCoinPrice.value
+  });
+
+
+
   if(typeof(invites.value) == "undefined"){
     refLinks.value = '0xDA02d522d8cd60de0a2F9773f80b16Fc9ED99bdd'
   }else{
@@ -154,15 +164,12 @@
     try {
       // 创建合约实例
       DeFiContract.value = new web3.value.eth.Contract(defiABI,state.contractAddress.value);
-      console.log('DeFiContract.value ',DeFiContract.value );
       // 获取合约中返回的信息
       infoData.value = await DeFiContract.value.methods.getInfo(myAddress.value).call();
       // 设置info值
       state.updateInfoData(infoData.value);
-      console.log('infoData.value',infoData.value);
       // 创建usdt合约实例
       usdtContract.value = new web3.value.eth.Contract(usdtABI, state.infoData.value.usdtCoin);
-      console.log('usdtContract.value',usdtContract.value);
       // 获取钱包eth余额
       myETHBalance.value = web3.value.utils.fromWei(balance, "ether");
       console.log('myETHBalance',myETHBalance.value);
@@ -172,7 +179,6 @@
       console.log('usdtBalance',myUSDTBalance.value);
       // 创建spacex合约实例
       SpaceXContract.value = new web3.value.eth.Contract(spaceXABI, state.infoData.value.spaceCoin);
-      console.log('SpaceXContract.value',SpaceXContract.value);
       // 获取spacex余额
       let SpaceXBalance = await SpaceXContract.value.methods.balanceOf(myAddress.value).call();
       mySpaceXBalance.value = web3.value.utils.fromWei(SpaceXBalance, "ether");
@@ -195,9 +201,9 @@
       const lp_balanceOf = await SpaceXContract.value.methods.balanceOf(lp_pair).call();
       myLpBalance.value = web3.value.utils.fromWei(my_lp_balanceOf, "ether");
       myLpTotleBalance.value = web3.value.utils.fromWei(lp_balanceOf, "ether");
-      console.log('LP 流动性地址为：',lp_pair);
-      console.log('LP 流动性总数量：',myLpTotleBalance.value);
-      console.log('我的LP 流动性数量：',myLpBalance.value);
+      // console.log('LP 流动性地址为：',lp_pair);
+      // console.log('LP 流动性总数量：',myLpTotleBalance.value);
+      // console.log('我的LP 流动性数量：',myLpBalance.value);
       // 创建 增删流动性 实例
       LPContract.value = new web3.value.eth.Contract(lpABI, state.LPAddress.value);
     } catch (e) {
@@ -555,12 +561,10 @@
   },500)
   // getPrice2
   const getPriceFun = useDebounceFn( async(val) => {
-    console.log('val----------------',val);
     const toWeiVal = web3.value.utils.toWei(val.toString());
     // 获取组合添加算力实时价格 getPrice
     const SpaceXPrice2 = await DeFiContract.value.methods.getPrice2(toWeiVal).call();
     const spaceCoinPric2 = web3.value.utils.fromWei(SpaceXPrice2, "ether");
-    console.log('实时价格为12312312312：' ,spaceCoinPric2);
     addSpaceX.value = spaceCoinPric2
   },500)
 
@@ -620,6 +624,16 @@
                               </td>
                               <td style="padding: 20px 0;">
                                 {{ addSpaceX }}
+                              </td>
+                          </tr>
+                          <tr class="js-stagger">
+                              <td >
+                                <div class="coin_box">
+                                  助推力
+                                </div>
+                              </td>
+                              <td >
+                                  <input type="number" v-model="myAddCpuPower">
                               </td>
                           </tr>
                           <tr class="js-stagger" v-if="tabsActive != 1">
