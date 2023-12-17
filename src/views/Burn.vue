@@ -136,14 +136,14 @@
             <count-to class="conut_to" :startVal='0' :endVal='fromWeiFun(state.infoData.value.deadNum)' :duration='3000' :decimals="5"/>
             <span class="label">{{ $t("TotalBlackHole") }}</span>
           </div>
-          <div class="burn_item">
+          <!-- <div class="burn_item">
             <count-to class="conut_to" :startVal='0' :endVal='60000000' :duration='3000' :decimals="0"/>
             <span class="label">{{ $t("TotalDeflation") }}</span>
           </div>
           <div class="burn_item">
             <count-to class="conut_to" :startVal='0' :endVal='6000000000' :duration='3000' :decimals="0"/>
             <span class="label">{{ $t("Circulation") }}</span>
-          </div>
+          </div> -->
         </div>
       <Footer />
     </div>
