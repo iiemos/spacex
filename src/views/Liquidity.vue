@@ -2,6 +2,7 @@
 <script setup>
   import { ref, computed, onMounted, watch } from "vue";
   import { RouterLink, RouterView } from "vue-router";
+  import math from '@/assets/js/math.js'
   import { useStorage } from '@vueuse/core'
   // import Web3 from 'web3'
   import { useI18n } from 'vue-i18n'
@@ -22,22 +23,15 @@
   const addSpaceX = ref(0) // 
   const tabsActive = ref(1)
   const myUSDTNumber = ref(0) // 添加的usdt数量
-  // let addSpaceX = computed(async (d)=>{  // 动态计算算力添加的SpaceX数量
-  //   // return (Number(myUSDTNumber.value)/ 0.3 * 0.194333333333333333) / spaceCoinPrice.value
-  //   if(myUSDTNumber.value == 0) return
-  //   const resPrice = await getPriceFun((Number(myUSDTNumber.value)/ 0.3 * 0.5833))
-  //   console.log('resPrice',resPrice);
-  //    return 0
-  //   // return (Number(myUSDTNumber.value)/ 0.3 * 0.5833) * spaceCoinPrice.value
-  //   // return Number(myUSDTNumber.value) * spaceCoinPrice.value
-  // })
-  // const addSpaceX = computedAsync(
-  //   async () => {
-  //     if(myUSDTNumber.value == 0) return 0
-  //     return await getPriceFun((Number(myUSDTNumber.value)/ 0.3 * 0.5833))
-  //   },
-  //   null, // initial state
-  // )
+  const myUSDTNumber2 = ref(0) // 组合添加的usdt数量
+
+
+
+  let addNum = math.add(3,2); // 5
+let mulNum = math.multiply(3,2); // 6
+let subNum = math.subtract(3,2); // 1 
+let divNum = math.divide(3,2); // 1.5
+
 
   const state = useGlobalState();
   let web3 = ref();
@@ -58,20 +52,34 @@
   const myLpBalance = ref(0) // 流动性总余额
   const myLpTotleBalance = ref(0) // 我的流动性余额
   const myAddCpuPower = ref(0) // 加入添加的算力
+  const myAddCpuPower2 = ref(0) // 组合加入添加的算力
   
 
   // 监听LP添加usdt的变化，更新SpaceX的值
   watch(myUSDTNumber, (newValue) => {
     if(!newValue || newValue == 0) myAddCpuPower.value = 0
-    if(newValue == 0) return addSpaceX.value = 0
     myAddCpuPower.value = newValue * 2.5
-    getPriceFun((Number(newValue)/ 0.3 * 0.5833))
   });
 
   watch(myAddCpuPower, (newValue) => {
     if(!newValue || newValue == 0) myUSDTNumber.value = 0
     myUSDTNumber.value = newValue / 2.5
   });
+
+// 监听tabs2添加usdt的变化，更新SpaceX的值
+  watch(myUSDTNumber2, (newValue) => {
+    if(!newValue || newValue == 0) myAddCpuPower2.value = 0
+    if(newValue == 0) return addSpaceX.value = 0
+    myAddCpuPower2.value = (newValue * 0.83)
+    
+    getPriceFun((Number(newValue)/ 0.3 * 0.5833))
+  });
+
+  watch(myAddCpuPower2, (newValue) => {
+    if(!newValue || newValue == 0) myUSDTNumber2.value = 0
+    myUSDTNumber2.value = (newValue / 0.83)
+  });
+
   
    const AddLpUsdtNumber = ref(0) // 添加流动性usdt数量
   let spaceCoinPrice = ref(0); // SpaceX实时价格（1USDT）
@@ -321,11 +329,11 @@
     }
     if(myETHBalance.value * 1 < 0.001) return ElMessage.warning(t('gasError'));
     if(myUSDTBalance.value < 0.01) return ElMessage.error(t('USDTbalanceError'));
-    if(myUSDTNumber.value < 0.01) return ElMessage.error(t('amountSmal'));
+    if(myUSDTNumber2.value < 0.01) return ElMessage.error(t('amountSmal'));
     if(pushAddress.value == '')  return ElMessage.error(t('addressEmpty'));
-    if(myUSDTNumber.value > myUSDTBalance.value) return ElMessage.error(t('USDTbalanceError'));
+    if(myUSDTNumber2.value > myUSDTBalance.value) return ElMessage.error(t('USDTbalanceError'));
     if(addSpaceX.value > mySpaceXBalance.value) return ElMessage.error(t('SpaceXbalanceError'));
-    const callValue = web3.value.utils.toWei(myUSDTNumber.value.toString());
+    const callValue = web3.value.utils.toWei(myUSDTNumber2.value.toString());
     const callSpaceXValue = web3.value.utils.toWei(addSpaceX.value.toString());
     // return
     // 判断是否授权
@@ -397,7 +405,7 @@
             .once('receipt', res => {
               ElMessage.success(t('TransactionSuccess'))
               console.log("Transaction confirmed");
-              myUSDTNumber.value = 0
+              myUSDTNumber2.value = 0
               joinWeb3();
             })
             .catch((error) => {
@@ -604,7 +612,7 @@
                       </div>
                     </div>
                   </div>
-                  <table class="data additional-toggle" style="display: table">
+                  <table v-if="tabsActive == 1" class="data additional-toggle" style="display: table">
                       <tbody >
                           <tr class="js-stagger">
                               <td >
@@ -616,7 +624,31 @@
                                   <input type="number" v-model="myUSDTNumber">
                               </td>
                           </tr>
-                          <tr class="js-stagger" v-if="tabsActive != 1">
+                          <tr class="js-stagger">
+                              <td >
+                                <div class="coin_box">
+                                  助推力
+                                </div>
+                              </td>
+                              <td >
+                                  <input type="number" v-model="myAddCpuPower">
+                              </td>
+                          </tr>
+                      </tbody>
+                  </table>
+                  <table v-if="tabsActive == 2" class="data additional-toggle" style="display: table">
+                      <tbody >
+                          <tr class="js-stagger">
+                              <td >
+                                <div class="coin_box">
+                                  <IconUSDT class="lp_icon" /> USDT
+                                </div>
+                              </td>
+                              <td >
+                                  <input type="number" v-model="myUSDTNumber2">
+                              </td>
+                          </tr>
+                          <tr class="js-stagger">
                               <td >
                                 <div class="coin_box">
                                   <IconSpacex class="lp_icon" /> SpaceX
@@ -633,10 +665,10 @@
                                 </div>
                               </td>
                               <td >
-                                  <input type="number" v-model="myAddCpuPower">
+                                  <input type="number" v-model="myAddCpuPower2">
                               </td>
                           </tr>
-                          <tr class="js-stagger" v-if="tabsActive != 1">
+                          <tr class="js-stagger">
                               <td >
                                 <div class="coin_box">
                                   Address
