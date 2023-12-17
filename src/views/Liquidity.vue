@@ -70,14 +70,14 @@ let divNum = math.divide(3,2); // 1.5
   watch(myUSDTNumber2, (newValue) => {
     if(!newValue || newValue == 0) myAddCpuPower2.value = 0
     if(newValue == 0) return addSpaceX.value = 0
-    myAddCpuPower2.value = (newValue * 0.83)
+    myAddCpuPower2.value = (newValue * 8.3)
     
     getPriceFun((Number(newValue)/ 0.3 * 0.5833))
   });
 
   watch(myAddCpuPower2, (newValue) => {
     if(!newValue || newValue == 0) myUSDTNumber2.value = 0
-    myUSDTNumber2.value = (newValue / 0.83)
+    myUSDTNumber2.value = (newValue / 8.3)
   });
 
   
