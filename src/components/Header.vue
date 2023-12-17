@@ -79,9 +79,9 @@ const changeLang = (val) => {
         <li class="mobile-only">
           <RouterLink :to="`introduction?invs=${invites}`">{{ $t("Introduction") }}</RouterLink>
         </li>
-        <li class="mobile-only">
+        <!-- <li class="mobile-only">
           <RouterLink :to="`/?invs=${invites}`">{{ $t("whitePaper") }}</RouterLink>
-        </li>
+        </li> -->
       </ul>
     </div>
     <header class="main-header">
@@ -125,9 +125,9 @@ const changeLang = (val) => {
           <li>
             <RouterLink :to="`introduction?invs=${invites}`">{{ $t("Introduction") }}</RouterLink>
           </li>
-          <li>
+          <!-- <li>
             <RouterLink :to="`/?invs=${invites}`">{{ $t("whitePaper") }}</RouterLink>
-          </li>
+          </li> -->
         </ul>
       </nav>
 

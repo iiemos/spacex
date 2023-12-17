@@ -270,7 +270,7 @@ const copyLink = () => {
                     </div>
                     <div class="transfrom_text">
                       <span>
-                        ~ {{ USDTtransFormSpaceXCoin(state.infoData.value.teamAward) }} SpaceX
+                        ≈ {{ USDTtransFormSpaceXCoin(state.infoData.value.teamAward) }} SpaceX
                       </span>
                     </div>
                   </div>
@@ -289,7 +289,7 @@ const copyLink = () => {
                     </div>
                     <div class="transfrom_text">
                       <span>
-                        ~ {{ USDTtransFormSpaceXCoin(state.infoData.value.team2Award) }} SpaceX
+                        ≈ {{ USDTtransFormSpaceXCoin(state.infoData.value.team2Award) }} SpaceX
                       </span>
                     </div>
                    </div>

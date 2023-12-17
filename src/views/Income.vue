@@ -291,7 +291,7 @@ const compound = useDebounceFn( async() => {
                     </div>
                     <div>
                       <span>
-                        ~ {{ USDTtransFormSpaceXCoin(state.infoData.value.overAward) }} SpaceX
+                        ≈ {{ USDTtransFormSpaceXCoin(state.infoData.value.overAward) }} SpaceX
                       </span>
                     </div>
                   </td>
@@ -305,7 +305,7 @@ const compound = useDebounceFn( async() => {
                     </div>
                     <div>
                       <span>
-                        ~ {{ USDTtransFormSpaceXCoin(state.infoData.value.userAward) }} SpaceX
+                        ≈ {{ USDTtransFormSpaceXCoin(state.infoData.value.userAward) }} SpaceX
                       </span>
                     </div>
                   </td>
@@ -320,7 +320,7 @@ const compound = useDebounceFn( async() => {
         </div>
       </div>
     </div>
-    <div class="collapse">
+    <div class="collapse" v-if="false">
       <div class="section-inner resize" style="">
         <div class="inner-left-top">
           <p class="bold-over-header animate">{{ $t("revenue") }}</p>
