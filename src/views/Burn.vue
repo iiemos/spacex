@@ -15,7 +15,11 @@
   let myBalance=ref(null)// 钱包余额
   let infoData =ref(null)// 合约信息
 
-  
+  let fromWeiFun = (val)=>{ 
+    if(val == 0) return val
+    return (val / 1000000000000000000)
+  }
+
   let refLinks = computed(()=>{ 
     if(myAddress.value){
       return window.location.origin + `/?invs=${myAddress.value}`
@@ -104,6 +108,7 @@
       console.log('myBalance',SpaceXContract.value.methods,myBalance);
       infoData.value = await SpaceXContract.value.methods.getInfo(myAddress.value).call();
       state.updateInfoData(infoData.value)
+      console.log('infoData.value',infoData.value);
     }catch(e){
       console.log(e);
     }
@@ -123,30 +128,42 @@
       <Header />
         <section class="section-animate bg-burn"></section>
         <div class="section-inner-center">
-        <h3>{{ $t("TokenBurning") }}</h3>
-        <p>{{ $t("SpaceXTokenBurnStatus") }}</p>
+          <h3>{{ $t("TokenBurning") }}</h3>
+          <p>{{ $t("SpaceXTokenBurnStatus") }}</p>
         </div>
-        <div id="stats" class="section stats">
-        <div class="content-center">
-            <div id="stat1" class="column3 stat ">
-            <span class="number counter" :data-target="state.infoData.value.deadNum">0</span>
+        <div class="burn_num">
+          <div class="burn_item">
+            <count-to class="conut_to" :startVal='0' :endVal='fromWeiFun(state.infoData.value.deadNum)' :duration='3000' :decimals="5"/>
             <span class="label">{{ $t("TotalBlackHole") }}</span>
-            </div>
-            <div id="stat2" class="column3 stat ">
-            <span class="number counter" data-target="222">0</span>
-            <span class="label" >{{ $t("TotalDeflation") }}</span>
-            </div>
-            <div id="stat3" class="column3 stat ">
-            <span class="number counter" data-target="211">0</span>
-            <span class="label" >{{ $t("Circulation") }}</span>
-            </div>
+          </div>
+          <div class="burn_item">
+            <count-to class="conut_to" :startVal='0' :endVal='60000000' :duration='3000' :decimals="0"/>
+            <span class="label">{{ $t("TotalDeflation") }}</span>
+          </div>
+          <div class="burn_item">
+            <count-to class="conut_to" :startVal='0' :endVal='6000000000' :duration='3000' :decimals="0"/>
+            <span class="label">{{ $t("Circulation") }}</span>
+          </div>
         </div>
-        </div>
-  
       <Footer />
     </div>
   </template>
   
-  <style>
+  <style lang="less">
+  .burn_num{
+    padding: 50px 0;
+    .burn_item{
+      padding: 10px 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font: 48px/55px D-DIN-Light,Arial,Verdana,sans-serif;
+      margin: 0;
+      .label{
+        font: 12px/24px D-DIN-Medium,Arial,Verdana,sans-serif;
+      }
+    }
+  }
   </style>
   
