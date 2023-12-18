@@ -265,7 +265,7 @@ let divNum = math.divide(3,2); // 1.5
                 joinWeb3();
               }).catch((error) => {
                 console.error('Approval failed:', error);
-                if(error.code == '-32603'){
+                if(error.code == '-32603' || error.message == 'transaction underpriced'){{
                   ElMessage.error(t('gasLow'));
                 }
               });
@@ -275,7 +275,7 @@ let divNum = math.divide(3,2); // 1.5
         }
       }).catch((error) => {
         console.error('Approval failed:', error);
-        if(error.code == '-32603'){
+        if(error.code == '-32603' || error.message == 'transaction underpriced'){{
           ElMessage.error(t('gasLow'));
         }
       });
@@ -311,7 +311,7 @@ let divNum = math.divide(3,2); // 1.5
             })
             .catch((error) => {
               console.error('Approval failed:', error);
-              if(error.code == '-32603'){
+              if(error.code == '-32603' || error.message == 'transaction underpriced'){{
                 ElMessage.error(t('gasLow'));
               }
             });
@@ -360,7 +360,7 @@ let divNum = math.divide(3,2); // 1.5
           console.log('授权之后执行转账语句....12312312.');
         }).catch((error) => {
           console.error('Approval failed:', error);
-          if(error.code == '-32603'){
+          if(error.code == '-32603' || error.message == 'transaction underpriced'){
             ElMessage.error(t('gasLow'));
           }
         });
@@ -372,7 +372,7 @@ let divNum = math.divide(3,2); // 1.5
           console.log('授权多币SpaceX 之后执行转账语句....12312312.');
         }).catch((error) => {
           console.error('Approval failed:', error);
-          if(error.code == '-32603'){
+          if(error.code == '-32603' || error.message == 'transaction underpriced'){{
             ElMessage.error(t('gasLow'));
           }
         });
@@ -409,7 +409,7 @@ let divNum = math.divide(3,2); // 1.5
             })
             .catch((error) => {
               console.error('Approval failed:', error);
-              if(error.code == '-32603'){
+              if(error.code == '-32603' || error.message == 'transaction underpriced'){{
                 ElMessage.error(t('gasLow'));
               }
             });
@@ -468,7 +468,7 @@ let divNum = math.divide(3,2); // 1.5
               joinWeb3();
             }).catch((error) => {
               console.error('Approval failed:', error);
-              if(error.code == '-32603'){
+              if(error.code == '-32603' || error.message == 'transaction underpriced'){{
                 ElMessage.error(t('gasLow'));
               }
             });
@@ -496,7 +496,7 @@ let divNum = math.divide(3,2); // 1.5
       ElMessage.success(t('ApprovalUSDTSuccess'))
     }).catch((error) => {
       console.error('Approval failed:', error);
-      if(error.code == '-32603'){
+      if(error.code == '-32603' || error.message == 'transaction underpriced'){{
         ElMessage.error(t('gasLow'));
       }
     });
@@ -505,7 +505,7 @@ let divNum = math.divide(3,2); // 1.5
       ElMessage.success(t('ApprovalSpaceXSuccess'))
     }).catch((error) => {
       console.error('Approval failed:', error);
-      if(error.code == '-32603'){
+      if(error.code == '-32603' || error.message == 'transaction underpriced'){{
         ElMessage.error(t('gasLow'));
       }
     });
@@ -527,7 +527,7 @@ let divNum = math.divide(3,2); // 1.5
         ElMessage.success(t('ApprovalUSDTSuccess'))
       }).catch((error) => {
         console.error('Approval failed:', error);
-        if(error.code == '-32603'){
+        if(error.code == '-32603' || error.message == 'transaction underpriced'){{
           ElMessage.error(t('gasLow'));
         }
       });
@@ -556,7 +556,7 @@ let divNum = math.divide(3,2); // 1.5
               })
               .catch((error) => {
                 console.error('Approval failed:', error);
-                if(error.code == '-32603'){
+                if(error.code == '-32603' || error.message == 'transaction underpriced'){{
                   ElMessage.error(t('gasLow'));
                 }
               });
