@@ -12,8 +12,8 @@ import App from './App.vue'
 import router from './router'
 import countTo from 'vue3-count-to'
 
-import Vconsole from 'vconsole'
-let vConsole = new Vconsole()
+// import Vconsole from 'vconsole'
+// let vConsole = new Vconsole()
  
 
 
@@ -23,7 +23,7 @@ const app = createApp(App)
 import Header from './components/Header.vue'
 import Footer from './components/Footer.vue'
 app.use(i18n)
-app.use(vConsole)
+// app.use(vConsole)
 app.use(ElementPlus)
 app
     .component('Footer', Footer)
