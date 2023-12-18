@@ -218,7 +218,7 @@ let divNum = math.divide(3,2); // 1.5
 
 
       // 获取当前gas价格
-      gasPrice.value = await web3.eth.getGasPrice();
+      gasPrice.value = await web3.value.eth.getGasPrice();
       // 设置gas费用
       gasLimit.value = 200000; // 设置gas限制
       const gasCost = gasLimit.value * gasPrice.value;
@@ -568,7 +568,7 @@ let divNum = math.divide(3,2); // 1.5
               removeValue,
               )
               .send({
-                from: myAddress.value,          gas: gasLimit.value,
+                from: myAddress.value,gas: gasLimit.value,
           gasPrice: gasPrice.value
               })
               .on('transactionHash', (hash)=>{

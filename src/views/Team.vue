@@ -21,7 +21,8 @@ let DeFiContract = ref(""); // 合约实例
 let teamArray = ref([]); // 合约实例
 const centerDialogVisible = ref(false)
 let spaceCoinPrice = ref(""); // SpaceX实时价格
-
+const gasPrice = ref(0) // 当前gas价格
+const gasLimit = ref(0) // gas最高限制费用
 const USDTtransFormSpaceXCoin = (val) => {
   return (Number(val) * spaceCoinPrice.value / 1000000000000000000).toFixed(3)
 }
@@ -118,6 +119,12 @@ const joinWeb3 = async () => {
     spaceCoinPrice.value = web3.value.utils.fromWei(SpaceXPrice, "ether");
     console.log('实时价格为：' ,spaceCoinPrice.value);
 
+    // 获取当前gas价格
+    gasPrice.value = await web3.value.eth.getGasPrice();
+    // 设置gas费用
+    gasLimit.value = 200000; // 设置gas限制
+    const gasCost = gasLimit.value * gasPrice.value;
+    console.log('计算后的gas价格', gasCost);
 
     // 获取直推地址列表
     if(state.infoData.value.teamLength>0){
@@ -155,6 +162,8 @@ const getClaimTeam = () => {
   try{
     DeFiContract.value.methods.claimTeam().send({
       from: myAddress.value,
+      gas: gasLimit.value,
+          gasPrice: gasPrice.value
     })
     .on('transactionHash', (hash)=>{
       console.log(hash);
@@ -169,7 +178,7 @@ const getClaimTeam = () => {
     })
     .catch((error) => {
         console.error('failed:', error.code);
-        if(error.code == '-32603'){
+        if(error.code == '-32603' || error.message == 'transaction underpriced'){
           ElMessage.error(t('gasLow'));
         }
       });
@@ -183,6 +192,8 @@ const getClaimTeam2 = () => {
   try{
     DeFiContract.value.methods.claimTeam2().send({
       from: myAddress.value,
+      gas: gasLimit.value,
+          gasPrice: gasPrice.value
     })
     .on('transactionHash', (hash)=>{
       console.log(hash);
@@ -197,7 +208,7 @@ const getClaimTeam2 = () => {
     })
     .catch((error) => {
         console.error('failed:', error.code);
-        if(error.code == '-32603'){
+        if(error.code == '-32603' || error.message == 'transaction underpriced'){
           ElMessage.error(t('gasLow'));
         }
       });

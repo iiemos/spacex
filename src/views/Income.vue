@@ -20,7 +20,8 @@ let SpaceXContract = ref(""); // SpaceX合约实例
 let mySpaceXBalance = ref(""); // SpaceX余额
 let spaceCoinPrice = ref(""); // SpaceX实时价格
 // let yuedengSpaceX = ref(""); // USDT对应的SpaceX数量
-
+const gasPrice = ref(0) // 当前gas价格
+const gasLimit = ref(0) // gas最高限制费用
 // 监听LP添加usdt的变化，更新SpaceX的值
 // watch(spaceCoinPrice, (newValue) => {
 //   yuedengSpaceX.value = Number(state.infoData.value.userAward) * newValue
@@ -132,6 +133,13 @@ const joinWeb3 = async () => {
       const SpaceXPrice = await DeFiContract.value.methods.getPrice(state.infoData.value.spaceCoin).call();
       spaceCoinPrice.value = web3.value.utils.fromWei(SpaceXPrice, "ether");
       console.log('实时价格为：' ,spaceCoinPrice.value);
+
+            // 获取当前gas价格
+      gasPrice.value = await web3.value.eth.getGasPrice();
+      // 设置gas费用
+      gasLimit.value = 200000; // 设置gas限制
+      const gasCost = gasLimit.value * gasPrice.value;
+      console.log('计算后的gas价格', gasCost);
     } catch (e) {
       console.log(e);
     }
@@ -144,7 +152,8 @@ const withdraw = useDebounceFn( async() => {
   if(myETHBalance.value * 1 < 0.001) return ElMessage.warning('Insufficient Gas');
   if(state.infoData.value.userAward == '0') return ElMessage.warning('当前奖励为0，请确认后再进行操作！');
   try{
-    DeFiContract.value.methods.claim().send({from: myAddress.value})
+    DeFiContract.value.methods.claim().send({from: myAddress.value,gas: gasLimit.value,
+          gasPrice: gasPrice.value})
     .on('transactionHash', (hash)=>{
       console.log('hash',hash);
       ElMessage.success('Transaction sent')
@@ -157,7 +166,7 @@ const withdraw = useDebounceFn( async() => {
     })
     .catch((error) => {
         console.error('Approval failed:', error.code);
-        if(error.code == '-32603'){
+        if(error.code == '-32603' || error.message == 'transaction underpriced'){
           ElMessage.error(t('gasLow'));
         }
       });
