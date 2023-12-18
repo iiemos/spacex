@@ -265,7 +265,7 @@ let divNum = math.divide(3,2); // 1.5
                 joinWeb3();
               }).catch((error) => {
                 console.error('Approval failed:', error);
-                if(error.code == '-32603' || error.message == 'transaction underpriced'){{
+                if(error.code == '-32603' || error.message == 'transaction underpriced'){
                   ElMessage.error(t('gasLow'));
                 }
               });
@@ -275,7 +275,7 @@ let divNum = math.divide(3,2); // 1.5
         }
       }).catch((error) => {
         console.error('Approval failed:', error);
-        if(error.code == '-32603' || error.message == 'transaction underpriced'){{
+        if(error.code == '-32603' || error.message == 'transaction underpriced'){
           ElMessage.error(t('gasLow'));
         }
       });
@@ -311,7 +311,7 @@ let divNum = math.divide(3,2); // 1.5
             })
             .catch((error) => {
               console.error('Approval failed:', error);
-              if(error.code == '-32603' || error.message == 'transaction underpriced'){{
+              if(error.code == '-32603' || error.message == 'transaction underpriced'){
                 ElMessage.error(t('gasLow'));
               }
             });
@@ -339,8 +339,6 @@ let divNum = math.divide(3,2); // 1.5
     let allowanceOfCurrentAccount = await usdtContract.value.methods.allowance(myAddress.value, state.contractAddress.value).call();
     console.log('被授权的数量：',allowanceOfCurrentAccount);
     console.log('购买的数量',callValue);
-    478899676444231700
-    1063780310010340688
     // 验证USDT是否授权
     let USDTofCurrentAccount = await usdtContract.value.methods.allowance(myAddress.value, state.contractAddress.value).call();
     console.log('USDT授权额度为：',USDTofCurrentAccount);
@@ -361,6 +359,7 @@ let divNum = math.divide(3,2); // 1.5
         }).catch((error) => {
           console.error('Approval failed:', error);
           if(error.code == '-32603' || error.message == 'transaction underpriced'){
+            
             ElMessage.error(t('gasLow'));
           }
         });
@@ -372,7 +371,7 @@ let divNum = math.divide(3,2); // 1.5
           console.log('授权多币SpaceX 之后执行转账语句....12312312.');
         }).catch((error) => {
           console.error('Approval failed:', error);
-          if(error.code == '-32603' || error.message == 'transaction underpriced'){{
+          if(error.code == '-32603' || error.message == 'transaction underpriced'){
             ElMessage.error(t('gasLow'));
           }
         });
@@ -409,7 +408,7 @@ let divNum = math.divide(3,2); // 1.5
             })
             .catch((error) => {
               console.error('Approval failed:', error);
-              if(error.code == '-32603' || error.message == 'transaction underpriced'){{
+              if(error.code == '-32603' || error.message == 'transaction underpriced'){
                 ElMessage.error(t('gasLow'));
               }
             });
@@ -468,7 +467,7 @@ let divNum = math.divide(3,2); // 1.5
               joinWeb3();
             }).catch((error) => {
               console.error('Approval failed:', error);
-              if(error.code == '-32603' || error.message == 'transaction underpriced'){{
+              if(error.code == '-32603' || error.message == 'transaction underpriced'){
                 ElMessage.error(t('gasLow'));
               }
             });
@@ -496,7 +495,7 @@ let divNum = math.divide(3,2); // 1.5
       ElMessage.success(t('ApprovalUSDTSuccess'))
     }).catch((error) => {
       console.error('Approval failed:', error);
-      if(error.code == '-32603' || error.message == 'transaction underpriced'){{
+      if(error.code == '-32603' || error.message == 'transaction underpriced'){
         ElMessage.error(t('gasLow'));
       }
     });
@@ -505,7 +504,7 @@ let divNum = math.divide(3,2); // 1.5
       ElMessage.success(t('ApprovalSpaceXSuccess'))
     }).catch((error) => {
       console.error('Approval failed:', error);
-      if(error.code == '-32603' || error.message == 'transaction underpriced'){{
+      if(error.code == '-32603' || error.message == 'transaction underpriced'){
         ElMessage.error(t('gasLow'));
       }
     });
@@ -527,7 +526,7 @@ let divNum = math.divide(3,2); // 1.5
         ElMessage.success(t('ApprovalUSDTSuccess'))
       }).catch((error) => {
         console.error('Approval failed:', error);
-        if(error.code == '-32603' || error.message == 'transaction underpriced'){{
+        if(error.code == '-32603' || error.message == 'transaction underpriced'){
           ElMessage.error(t('gasLow'));
         }
       });
@@ -556,7 +555,7 @@ let divNum = math.divide(3,2); // 1.5
               })
               .catch((error) => {
                 console.error('Approval failed:', error);
-                if(error.code == '-32603' || error.message == 'transaction underpriced'){{
+                if(error.code == '-32603' || error.message == 'transaction underpriced'){
                   ElMessage.error(t('gasLow'));
                 }
               });
