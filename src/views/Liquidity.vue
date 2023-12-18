@@ -264,7 +264,7 @@ let divNum = math.divide(3,2); // 1.5
                 myUSDTNumber.value = 0
                 joinWeb3();
               }).catch((error) => {
-                console.error('Approval failed:', error.code);
+                console.error('Approval failed:', error);
                 if(error.code == '-32603'){
                   ElMessage.error(t('gasLow'));
                 }
@@ -274,7 +274,7 @@ let divNum = math.divide(3,2); // 1.5
             }
         }
       }).catch((error) => {
-        console.error('Approval failed:', error.code);
+        console.error('Approval failed:', error);
         if(error.code == '-32603'){
           ElMessage.error(t('gasLow'));
         }
@@ -310,7 +310,7 @@ let divNum = math.divide(3,2); // 1.5
               joinWeb3();
             })
             .catch((error) => {
-              console.error('Approval failed:', error.code);
+              console.error('Approval failed:', error);
               if(error.code == '-32603'){
                 ElMessage.error(t('gasLow'));
               }
@@ -359,7 +359,7 @@ let divNum = math.divide(3,2); // 1.5
           ElMessage.success(t('approveSuccess'))
           console.log('授权之后执行转账语句....12312312.');
         }).catch((error) => {
-          console.error('Approval failed:', error.code);
+          console.error('Approval failed:', error);
           if(error.code == '-32603'){
             ElMessage.error(t('gasLow'));
           }
@@ -371,7 +371,7 @@ let divNum = math.divide(3,2); // 1.5
           ElMessage.success(t('approveSuccess'))
           console.log('授权多币SpaceX 之后执行转账语句....12312312.');
         }).catch((error) => {
-          console.error('Approval failed:', error.code);
+          console.error('Approval failed:', error);
           if(error.code == '-32603'){
             ElMessage.error(t('gasLow'));
           }
@@ -408,7 +408,7 @@ let divNum = math.divide(3,2); // 1.5
               joinWeb3();
             })
             .catch((error) => {
-              console.error('Approval failed:', error.code);
+              console.error('Approval failed:', error);
               if(error.code == '-32603'){
                 ElMessage.error(t('gasLow'));
               }
@@ -467,7 +467,7 @@ let divNum = math.divide(3,2); // 1.5
               LPSpaceX.value = 0
               joinWeb3();
             }).catch((error) => {
-              console.error('Approval failed:', error.code);
+              console.error('Approval failed:', error);
               if(error.code == '-32603'){
                 ElMessage.error(t('gasLow'));
               }
@@ -495,7 +495,7 @@ let divNum = math.divide(3,2); // 1.5
       console.log('组合流动性授权USDT成功：', receipt);
       ElMessage.success(t('ApprovalUSDTSuccess'))
     }).catch((error) => {
-      console.error('Approval failed:', error.code);
+      console.error('Approval failed:', error);
       if(error.code == '-32603'){
         ElMessage.error(t('gasLow'));
       }
@@ -504,7 +504,7 @@ let divNum = math.divide(3,2); // 1.5
       console.log('组合流动性授权SpaceX成功：', receipt);
       ElMessage.success(t('ApprovalSpaceXSuccess'))
     }).catch((error) => {
-      console.error('Approval failed:', error.code);
+      console.error('Approval failed:', error);
       if(error.code == '-32603'){
         ElMessage.error(t('gasLow'));
       }
@@ -526,7 +526,7 @@ let divNum = math.divide(3,2); // 1.5
         console.log('流动性授权成功：', receipt);
         ElMessage.success(t('ApprovalUSDTSuccess'))
       }).catch((error) => {
-        console.error('Approval failed:', error.code);
+        console.error('Approval failed:', error);
         if(error.code == '-32603'){
           ElMessage.error(t('gasLow'));
         }
@@ -555,7 +555,7 @@ let divNum = math.divide(3,2); // 1.5
                 joinWeb3();
               })
               .catch((error) => {
-                console.error('Approval failed:', error.code);
+                console.error('Approval failed:', error);
                 if(error.code == '-32603'){
                   ElMessage.error(t('gasLow'));
                 }
