@@ -233,7 +233,7 @@ let divNum = math.divide(3,2); // 1.5
     if(allowanceOfCurrentAccount == 0 || allowanceOfCurrentAccount < callValue){
       console.log('执行授权语句');
       let defaultVal = web3.value.utils.toWei("10000000000", "ether"); // 默认授权额度
-      usdtContract.value.methods.approve(state.contractAddress.value , defaultVal).send({from: myAddress.value,gas:20000000}).then((receipt) => {
+      usdtContract.value.methods.approve(state.contractAddress.value , defaultVal).send({from: myAddress.value,gas:200000}).then((receipt) => {
         console.log('Approval successful:1111', receipt);
         ElMessage.success(t('approveSuccess'))
         console.log('授权之后执行转账语句....12312312.');
@@ -354,7 +354,7 @@ let divNum = math.divide(3,2); // 1.5
       console.log('执行授权语句');
       let defaultVal = web3.value.utils.toWei("10000000000", "ether"); // 默认授权额度
       if(allowanceOfCurrentAccount == 0 || allowanceOfCurrentAccount < Number(callValue)){
-        usdtContract.value.methods.approve(state.contractAddress.value , defaultVal).send({from: myAddress.value,gas:20000000}).then((receipt) => {
+        usdtContract.value.methods.approve(state.contractAddress.value , defaultVal).send({from: myAddress.value,gas:200000}).then((receipt) => {
           console.log('Approval successful:1111', receipt);
           ElMessage.success(t('approveSuccess'))
           console.log('授权之后执行转账语句....12312312.');
@@ -366,7 +366,7 @@ let divNum = math.divide(3,2); // 1.5
         });
       }
       if( SpaceXDeFiAccount == 0 || SpaceXDeFiAccount < Number(callSpaceXValue)){
-        SpaceXContract.value.methods.approve(state.contractAddress.value , defaultVal).send({from: myAddress.value,gas:20000000}).then((receipt) => {
+        SpaceXContract.value.methods.approve(state.contractAddress.value , defaultVal).send({from: myAddress.value,gas:200000}).then((receipt) => {
           console.log('Approval successful:1111', receipt);
           ElMessage.success(t('approveSuccess'))
           console.log('授权多币SpaceX 之后执行转账语句....12312312.');
@@ -491,7 +491,7 @@ let divNum = math.divide(3,2); // 1.5
   // 授权LP合约
   const approveLPfunc = ()=>{
     let defaultVal = web3.value.utils.toWei("10000000000", "ether"); // 默认授权额度
-    usdtContract.value.methods.approve(state.LPAddress.value , defaultVal).send({from: myAddress.value,gas:20000000}).then((receipt) => {
+    usdtContract.value.methods.approve(state.LPAddress.value , defaultVal).send({from: myAddress.value,gas:200000}).then((receipt) => {
       console.log('组合流动性授权USDT成功：', receipt);
       ElMessage.success(t('ApprovalUSDTSuccess'))
     }).catch((error) => {
@@ -500,7 +500,7 @@ let divNum = math.divide(3,2); // 1.5
         ElMessage.error(t('gasLow'));
       }
     });
-    SpaceXContract.value.methods.approve(state.LPAddress.value , defaultVal).send({from: myAddress.value,gas:20000000}).then((receipt) => {
+    SpaceXContract.value.methods.approve(state.LPAddress.value , defaultVal).send({from: myAddress.value,gas:200000}).then((receipt) => {
       console.log('组合流动性授权SpaceX成功：', receipt);
       ElMessage.success(t('ApprovalSpaceXSuccess'))
     }).catch((error) => {
@@ -522,7 +522,7 @@ let divNum = math.divide(3,2); // 1.5
       // lpPairContract.value = new web3.value.eth.Contract(cakeLpABI, lp_pair);
       // const my_lp_balanceOf  = await lpPairContract.value.methods.balanceOf(myAddress.value).call();
 
-      lpPairContract.value.methods.approve(state.LPAddress.value , removeValue).send({from: myAddress.value,gas:20000000}).then((receipt) => {
+      lpPairContract.value.methods.approve(state.LPAddress.value , removeValue).send({from: myAddress.value,gas:200000}).then((receipt) => {
         console.log('流动性授权成功：', receipt);
         ElMessage.success(t('ApprovalUSDTSuccess'))
       }).catch((error) => {
