@@ -359,7 +359,6 @@ let divNum = math.divide(3,2); // 1.5
         }).catch((error) => {
           console.error('Approval failed:', error);
           if(error.code == '-32603' || error.message == 'transaction underpriced'){
-            
             ElMessage.error(t('gasLow'));
           }
         });
