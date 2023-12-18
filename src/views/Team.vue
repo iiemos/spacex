@@ -162,7 +162,7 @@ const getClaimTeam = () => {
   try{
     DeFiContract.value.methods.claimTeam().send({
       from: myAddress.value,
-      gas: gasLimit.value,
+      // gas: gasLimit.value,
       gasPrice: gasPrice.value
     })
     .on('transactionHash', (hash)=>{
@@ -192,7 +192,7 @@ const getClaimTeam2 = () => {
   try{
     DeFiContract.value.methods.claimTeam2().send({
       from: myAddress.value,
-      gas: gasLimit.value,
+      // gas: gasLimit.value,
       gasPrice: gasPrice.value
     })
     .on('transactionHash', (hash)=>{

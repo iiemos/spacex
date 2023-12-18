@@ -154,7 +154,8 @@ const withdraw = useDebounceFn( async() => {
   if(myETHBalance.value * 1 < 0.001) return ElMessage.warning('Insufficient Gas');
   if(state.infoData.value.userAward == '0') return ElMessage.warning('当前奖励为0，请确认后再进行操作！');
   try{
-    DeFiContract.value.methods.claim().send({from: myAddress.value,gas: gasLimit.value,
+    DeFiContract.value.methods.claim().send({from: myAddress.value,
+      // gas: gasLimit.value,
           gasPrice: gasPrice.value})
     .on('transactionHash', (hash)=>{
       console.log('hash',hash);
