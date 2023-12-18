@@ -19,7 +19,6 @@
   import lpABI from "@/abis/lpABI.json";
   import cakeLpABI from "@/abis/cakeLpABI.json";
   const { t } = useI18n()
-  console.log('i18n', t('ApprovalUSDTSuccess'))
   const addSpaceX = ref(0) // 
   const tabsActive = ref(1)
   const myUSDTNumber = ref(0) // 添加的usdt数量
@@ -121,7 +120,6 @@ let divNum = math.divide(3,2); // 1.5
     // Web3浏览器检测
     if (typeof window.ethereum !== "undefined") {
       console.log("MetaMask is installed!");
-      console.log("当前连接网络的id:", window.ethereum.chainId);
     }
 
     web3.value = new Web3(window.ethereum);

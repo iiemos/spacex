@@ -78,7 +78,7 @@
 
   const joinWeb3 = async() =>{
 
-    let eth_chainId = web3.value.eth.getChainId();
+    let eth_chainId = await web3.value.eth.getChainId();
     console.log("查询eth_chainId", eth_chainId)
     DeFiContract.value = new web3.value.eth.Contract(SpaceXABI, state.contractAddress.value);
     // 请求用户授权 解决web3js无法直接唤起Meta Mask获取用户身份
