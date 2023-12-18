@@ -33,7 +33,7 @@ onMounted(() => {
     // Web3浏览器检测
     if (typeof window.ethereum !== 'undefined') {
       console.log('MetaMask is installed!');
-      console.log('当前连接网络的id:', window.ethereum.chainId)
+      // console.log('当前连接网络的id:', window.ethereum.chainId)
     }
     web3.value = new Web3(window.ethereum)
     // 连接钱包账户切换后触发的事件
@@ -86,20 +86,18 @@ onMounted(() => {
 
     SpaceXContract.value = new web3.value.eth.Contract(SpaceXABI, contractAddress.value);
     // 请求用户授权 解决web3js无法直接唤起Meta Mask获取用户身份
-    const enable = await ethereum.enable();
-    console.log('enable',enable[0]);
     // // 授权获取账户  
     // 返回指定地址账户的余额
-    let balance = await web3.value.eth.getBalance(enable[0]);
+    // let balance = await web3.value.eth.getBalance(enable[0]);
     myAddress.value = accounts[0];
-    console.log('balance',balance);
+    // console.log('balance',balance);
     // 账户余额
     try{
       // const signature = await web3.value.eth.personal.sign('msg', myAddress.value);
       // onsole.log("signature",signature)
 
-      let myBalance = web3.value.utils.fromWei(balance, 'ether');
-      console.log('myBalance',SpaceXContract.value.methods);
+      // let myBalance = web3.value.utils.fromWei(balance, 'ether');
+      // console.log('myBalance',SpaceXContract.value.methods);
       infoData.value = await SpaceXContract.value.methods.getInfo(myAddress.value).call();
       state.updateInfoData(infoData.value)
       console.log('state',state.infoData.value)

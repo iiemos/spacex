@@ -44,7 +44,7 @@ onMounted(() => {
   // Web3浏览器检测
   if (typeof window.ethereum !== "undefined") {
     console.log("MetaMask is installed!");
-    console.log("当前连接网络的id:", window.ethereum.chainId);
+    // console.log("当前连接网络的id:", window.ethereum.chainId);
   }
 
   web3.value = new Web3(window.ethereum);
@@ -89,14 +89,11 @@ const connections = () => {
 const joinWeb3 = async () => {
   let eth_chainId = web3.value.eth.getChainId();
     console.log("eth_chainId", eth_chainId);
-    let accounts = await web3.value.eth.getAccounts();
-    console.log("查询eth_chainId", eth_chainId);
     // 请求用户授权 解决web3js无法直接唤起Meta Mask获取用户身份
-    const enable = await ethereum.enable();
-    console.log("enable", enable[0]);
+    const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
     // // 授权获取账户
     // 返回指定地址账户的余额
-    let balance = await web3.value.eth.getBalance(enable[0]);
+    let balance = await web3.value.eth.getBalance(accounts[0]);
     myAddress.value = accounts[0];
     console.log("balance", balance);
     try {
