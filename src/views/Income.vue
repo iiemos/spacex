@@ -137,7 +137,7 @@ const joinWeb3 = async () => {
             // 获取当前gas价格
       gasPrice.value = await web3.value.eth.getGasPrice();
       // 设置gas费用
-      gasLimit.value = 200000; // 设置gas限制
+      gasLimit.value = 500000; // 设置gas限制
       const gasCost = gasLimit.value * gasPrice.value;
       console.log('计算后的gas价格', gasCost);
     } catch (e) {

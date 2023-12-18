@@ -25,13 +25,6 @@
   const myUSDTNumber2 = ref(0) // 组合添加的usdt数量
 
 
-
-  let addNum = math.add(3,2); // 5
-let mulNum = math.multiply(3,2); // 6
-let subNum = math.subtract(3,2); // 1 
-let divNum = math.divide(3,2); // 1.5
-
-
   const state = useGlobalState();
   let web3 = ref();
   let myAddress = ref(""); //我的地址
@@ -218,7 +211,7 @@ let divNum = math.divide(3,2); // 1.5
       // 获取当前gas价格
       gasPrice.value = await web3.value.eth.getGasPrice();
       // 设置gas费用
-      gasLimit.value = 200000; // 设置gas限制
+      gasLimit.value = 500000; // 设置gas限制
       const gasCost = gasLimit.value * gasPrice.value;
       console.log('计算后的gas价格', gasCost);
     } catch (e) {
