@@ -85,7 +85,7 @@ const connections = () => {
     });
 };
 const joinWeb3 = async () => {
-  let eth_chainId = web3.value.eth.getChainId();
+  let eth_chainId = await web3.value.eth.getChainId();
   console.log("eth_chainId", eth_chainId);
   DeFiContract.value = new web3.value.eth.Contract(
     SpaceXABI,
