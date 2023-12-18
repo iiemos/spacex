@@ -78,6 +78,8 @@
     "awardMsg": "当前收益为0，请确认后再操作!",
     "TransactionSend": "交易已发送!",
     "TransactionConfirmed": "交易已确认！",
+    "withdrawSend": "提现交易已发送!",
+    "withdrawConfirmed": "提现交易已确认，提现成功！",
     "WalletLinkSuccess": "链接钱包成功！",
     "amountSmal": "添加数额太小，请重新输入！",
     "addressEmpty": "地址不能为空",

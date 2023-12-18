@@ -79,6 +79,8 @@
     "awardMsg": "The current income is 0, please confirm before operating!",
     "TransactionSend": "Transaction sent!",
     "TransactionConfirmed": "Transaction confirmed!",
+    "withdrawSend": "Withdrawal transaction sent!",
+    "withdrawConfirmed": "The withdrawal transaction has been confirmed and the withdrawal was successful.！",
     "WalletLinkSuccess": "Wallet link successful!",
     "amountSmal": "The amount is too small, please re-enter",
     "addressEmpty": "Address cannot be empty",

@@ -213,7 +213,7 @@
       // 设置gas费用
       gasLimit.value = 500000; // 设置gas限制
       const gasCost = gasLimit.value * gasPrice.value;
-      console.log('计算后的gas价格', gasCost);
+      console.log('计算后的gas价格', gasCost/1000000000000000000);
     } catch (e) {
       console.log(e);
     }
@@ -224,6 +224,7 @@
     }
     if(myETHBalance.value * 1 < 0.001) return ElMessage.warning(t('gasError'));
     if(myUSDTBalance.value < 0.01 || myUSDTNumber.value < 0.01) return ElMessage.error(t('USDTbalanceError'));
+    if(myUSDTNumber.value > myUSDTBalance.value) return ElMessage.error(t('USDTbalanceError'));
     if(refLinks.value == 'undefined' || !refLinks.value) return ElMessage.warning(t('refLinksError')) 
     // if(myUSDTNumber.value > myUSDTBalance.value) return ElMessage.error('Solde de portefeuille insuffisant');
     const callValue = web3.value.utils.toWei(myUSDTNumber.value.toString());

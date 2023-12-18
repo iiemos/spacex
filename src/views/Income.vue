@@ -5,10 +5,12 @@ import { useGlobalState } from "@/store";
 import { useDebounceFn } from '@vueuse/core'
 import SpaceXABI from "@/abis/defiABI.json";
 import usdtABI from "@/abis/usdtABI.json";
+import { useI18n } from 'vue-i18n'
 // import Web3 from 'web3'
 import { ElMessage } from "element-plus";
 const state = useGlobalState();
 console.log("state", state);
+const { t } = useI18n()
 let web3 = ref();
 let myAddress = ref(""); //我的地址
 let infoData = ref(""); //我的地址
@@ -156,11 +158,11 @@ const withdraw = useDebounceFn( async() => {
           gasPrice: gasPrice.value})
     .on('transactionHash', (hash)=>{
       console.log('hash',hash);
-      ElMessage.success('Transaction sent')
+      ElMessage.success(t('withdrawSend'))
       console.log("Transaction sent");
     })
     .once('receipt', res => {
-      ElMessage.success('Transaction confirmed')
+      ElMessage.success(t('withdrawConfirmed'))
       console.log("Transaction confirmed");
       joinWeb3();
     })

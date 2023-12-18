@@ -78,6 +78,8 @@
     "TransactionSend": "トランザクションが送信されました!",
     "awardMsg": "現在の収入は0です、操作する前に確認してください！",
     "TransactionConfirmed": "お取引確認しました！",
+    "withdrawSend": "出金トランザクションが送信されました!",
+    "withdrawConfirmed": "出金取引が確認され、出金が成功しました。",
     "WalletLinkSuccess": "ウォレットリンクが成功しました！",
     "amountSmal": "金額が少なすぎるため、再入力してください",
     "addressEmpty": "アドレスを空にすることはできません",
