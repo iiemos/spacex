@@ -12,8 +12,8 @@ import App from './App.vue'
 import router from './router'
 import countTo from 'vue3-count-to'
 
-// import Vconsole from 'vconsole'
-// let vConsole = new Vconsole()
+import Vconsole from 'vconsole'
+let vConsole = new Vconsole()
  
 
 

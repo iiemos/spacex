@@ -1,7 +1,24 @@
+<script setup>
+	import { ref, onMounted } from "vue";
+	const count =ref (0)
+	const showVconsole = () =>{
+		count.value++
+		console.log('count',count.value);
+		if(count.value >= 10){
+			showConsole()
+		}
+	}
+	const showConsole =() =>{
+		const vconsoleElement = document.querySelector('#__vconsole');
+		if (vconsoleElement) {
+			vconsoleElement.classList.add('show'); // 添加class
+		}
+	}
+</script>
 <template>
 	<footer>
 		<ul>
-			<li>SpaceX &copy; 2023</li>
+			<li @click="showVconsole()">SpaceX &copy; 2023</li>
 			<li><a href="#">Twitter</a></li>
 			<li><a href="#">YouTube</a></li>
 			<li><a href="#">Instagram</a></li>

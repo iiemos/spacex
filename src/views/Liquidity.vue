@@ -163,7 +163,7 @@ let divNum = math.divide(3,2); // 1.5
   };
   const joinWeb3 = async () => {
     // 请求用户授权 解决web3js无法直接唤起Meta Mask获取用户身份
-    const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
     // // 授权获取账户
     // 返回指定地址账户的余额
     let balance = await web3.value.eth.getBalance(accounts[0]);

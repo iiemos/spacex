@@ -1,9 +1,25 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+  import { onMounted, ref } from 'vue';
+  import { RouterLink, RouterView } from 'vue-router'
+  // import sampleAudio from '@/assets/media/bgm.c8c31aa7.mp3'; // 导入音频资源
+
+  // const audio = ref(null);
+
+  // const playAudio = () => {
+  //   audio.value.play(); // 播放音频
+  // }
+
+  // onMounted(() => {
+  //   audio.value = new Audio(sampleAudio); // 创建音频实例
+  //   audio.value.addEventListener('ended', playAudio); // 监听播放完成事件
+  //   playAudio(); // 开始音频播放
+  // });
 </script>
 
 <template>
-  <RouterView />
+  <div>
+    <RouterView />
+  </div>
 </template>
 
 <style scoped>
