@@ -64,16 +64,16 @@
   watch(myUSDTNumber2, (newValue) => {
     if(!newValue || newValue == 0) myAddCpuPower2.value = 0
     if(newValue == 0) return addSpaceX.value = 0
-    myAddCpuPower2.value = (newValue * 8.3)
+    myAddCpuPower2.value = (newValue * 83.334)
     
-    getPriceFun((Number(newValue)/ 0.3 * 0.5833))
-    // getPriceFun((Number(newValue)/ 1.961))
+    // getPriceFun((Number(newValue)/ 0.3 * 0.5833))
+    getPriceFun((Number(newValue) * 1.961))
 
   });
 
   watch(myAddCpuPower2, (newValue) => {
     if(!newValue || newValue == 0) myUSDTNumber2.value = 0
-    myUSDTNumber2.value = (newValue / 8.3)
+    myUSDTNumber2.value = (newValue / 83.334)
   });
 
   

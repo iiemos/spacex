@@ -27,7 +27,7 @@ export const useGlobalState = createGlobalState(
     })
     const inviteLink = ref('0xDA02d522d8cd60de0a2F9773f80b16Fc9ED99bdd')
     const userLevel = ref('0')
-    const contractAddress=ref('0xb48bB044BC5bC73411612FC994041523933B41EE') // difi合约地址
+    const contractAddress=ref('0x9CaA582E6C68700A94A1b579F052083Cee8FF95e') // difi合约地址
     const LPAddress=ref('0x4805327d973AE7434759283e125F3801f740091D') // lp流动性添加合约地址
 
     // getters
