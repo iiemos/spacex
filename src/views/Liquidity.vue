@@ -67,7 +67,7 @@
     myAddCpuPower2.value = (newValue * 83.334)
     
     // getPriceFun((Number(newValue)/ 0.3 * 0.5833))
-    getPriceFun((Number(newValue) * 1.961))
+    getPriceFun((Number(newValue) * 1.94444))
 
   });
 
