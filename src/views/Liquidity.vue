@@ -64,17 +64,19 @@
   watch(myUSDTNumber2, (newValue) => {
     if(!newValue || newValue == 0) myAddCpuPower2.value = 0
     if(newValue == 0) return addSpaceX.value = 0
-    myAddCpuPower2.value = (newValue * 83.334)
+    // let reg = new RegExp(/^\d+(?:\.\d{0,2}))
+    // .toString().match(/^\d+(?:\.\d{0,2})?/)[0];
+    myAddCpuPower2.value =  Math.floor((newValue * 83.334) * 100) / 100
     
     // getPriceFun((Number(newValue)/ 0.3 * 0.5833))
     getPriceFun((Number(newValue) * 1.94444))
 
   });
 
-  watch(myAddCpuPower2, (newValue) => {
-    if(!newValue || newValue == 0) myUSDTNumber2.value = 0
-    myUSDTNumber2.value = (newValue / 83.334)
-  });
+  // watch(myAddCpuPower2, (newValue) => {
+  //   if(!newValue || newValue == 0) myUSDTNumber2.value = 0
+  //   myUSDTNumber2.value = (newValue / 83.334)
+  // });
 
   
    const AddLpUsdtNumber = ref(0) // 添加流动性usdt数量
@@ -672,8 +674,9 @@
                                   助推力
                                 </div>
                               </td>
-                              <td >
-                                  <input type="number" v-model="myAddCpuPower">
+                              <td style="padding: 20px 0;">
+                                {{ myAddCpuPower }}
+                                  <!-- <input type="number" v-model="myAddCpuPower"> -->
                               </td>
                           </tr>
                       </tbody>
@@ -706,8 +709,9 @@
                                   助推力
                                 </div>
                               </td>
-                              <td >
-                                  <input type="number" v-model="myAddCpuPower2">
+                              <td style="padding: 20px 0;">
+                                {{ myAddCpuPower2 }}
+                                  <!-- <input type="number" v-model="myAddCpuPower2"> -->
                               </td>
                           </tr>
                           <tr class="js-stagger">
