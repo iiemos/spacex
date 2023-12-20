@@ -11,7 +11,7 @@
 	import IconSpacex from '@/components/icons/IconSpacex.vue'
   import { useGlobalState } from "@/store";
   import { useDebounceFn,computedAsync } from '@vueuse/core'
-  import { ElMessage } from "element-plus";
+  import { ElMessage, ElNotification } from "element-plus";
   import { Pointer } from '@element-plus/icons-vue'
   import defiABI from "@/abis/defiABI.json";
   import usdtABI from "@/abis/usdtABI.json";
@@ -216,6 +216,7 @@
       const gasCost = gasLimit.value * gasPrice.value;
       console.log('计算后的gas价格', gasCost/1000000000000000000);
     } catch (e) {
+      ElMessage.warning(e.message);
       console.log(e);
     }
   };
@@ -599,11 +600,22 @@
   },500)
   // getPrice2
   const getPriceFun = useDebounceFn( async(val) => {
-    const toWeiVal = web3.value.utils.toWei(val.toString());
-    // 获取组合添加算力实时价格 getPrice
-    const SpaceXPrice2 = await DeFiContract.value.methods.getPrice2(toWeiVal).call();
-    const spaceCoinPric2 = web3.value.utils.fromWei(SpaceXPrice2, "ether");
-    addSpaceX.value = spaceCoinPric2
+    try{
+      const toWeiVal = web3.value.utils.toWei(val.toString());
+      // 获取组合添加算力实时价格 getPrice
+      const SpaceXPrice2 = await DeFiContract.value.methods.getPrice2(toWeiVal).call();
+      const spaceCoinPric2 = web3.value.utils.fromWei(SpaceXPrice2, "ether");
+      addSpaceX.value = spaceCoinPric2
+    } catch (e) {
+      ElNotification.error({
+          title: 'Error',
+          message: e.message,
+          offset: 10,
+          duration: 10000,
+        })
+        console.log(e);
+      }
+
   },500)
 
 </script>
