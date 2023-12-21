@@ -339,7 +339,6 @@
     if(!myAddress.value || myAddress.value === '0x00000000000000000000000000000000deadbeef'){
       return joinWeb3()
     }
-    mySpaceXBalance.value = 2110878.78956
     if(myETHBalance.value * 1 < 0.001) return ElMessage.warning(t('gasError'));
     if(myUSDTBalance.value < 0.01) return ElMessage.error(t('USDTbalanceError'));
     if(myUSDTNumber2.value < 0.01) return ElMessage.error(t('amountSmal'));
