@@ -64,10 +64,7 @@
   watch(myUSDTNumber2, (newValue) => {
     if(!newValue || newValue == 0) myAddCpuPower2.value = 0
     if(newValue == 0) return addSpaceX.value = 0
-    // let reg = new RegExp(/^\d+(?:\.\d{0,2}))
-    // .toString().match(/^\d+(?:\.\d{0,2})?/)[0];
-    myAddCpuPower2.value =  Math.floor((newValue * 83.334) * 100) / 100
-    
+    myAddCpuPower2.value =  Math.floor((newValue * 8.334) * 100) / 100
     // getPriceFun((Number(newValue)/ 0.3 * 0.5833))
     getPriceFun((Number(newValue) * 1.94444))
 
@@ -342,12 +339,14 @@
     if(!myAddress.value || myAddress.value === '0x00000000000000000000000000000000deadbeef'){
       return joinWeb3()
     }
+    mySpaceXBalance.value = 2110878.78956
     if(myETHBalance.value * 1 < 0.001) return ElMessage.warning(t('gasError'));
     if(myUSDTBalance.value < 0.01) return ElMessage.error(t('USDTbalanceError'));
     if(myUSDTNumber2.value < 0.01) return ElMessage.error(t('amountSmal'));
     if(pushAddress.value == '')  return ElMessage.error(t('addressEmpty'));
-    if(myUSDTNumber2.value > myUSDTBalance.value) return ElMessage.error(t('USDTbalanceError'));
-    if(addSpaceX.value > mySpaceXBalance.value) return ElMessage.error(t('SpaceXbalanceError'));
+
+    if(Number(myUSDTNumber2.value) > Number(myUSDTBalance.value)) return ElMessage.error(t('USDTbalanceError'));
+    if(Number(addSpaceX.value) > Number(mySpaceXBalance.value)) return ElMessage.error(t('SpaceXbalanceError'));
     const callValue = web3.value.utils.toWei(myUSDTNumber2.value.toString());
     const callSpaceXValue = web3.value.utils.toWei(addSpaceX.value.toString());
     // return
@@ -453,10 +452,11 @@
       return joinWeb3()
     }
     if(myETHBalance.value * 1 < 0.001) return ElMessage.warning(t('gasError'));
-    if(myUSDTBalance.value < 0.01 || AddLpUsdtNumber.value < 0.01) return ElMessage.error(t('USDTbalanceError'));
+    if(Number(myUSDTBalance.value) < 0.01 || Number(AddLpUsdtNumber.value) < 0.01) return ElMessage.error(t('USDTbalanceError'));
     // 判断账户 USDT 余额是否充足
-    if(AddLpUsdtNumber.value > myUSDTBalance.value) return ElMessage.error(t('USDTbalanceError'));
-    if(LPSpaceX.value > mySpaceXBalance.value) return ElMessage.error(t('SpaceXbalanceError'));
+    if(Number(AddLpUsdtNumber.value) > Number(myUSDTBalance.value)) return ElMessage.error(t('USDTbalanceError'));
+    // 判断账户 SpaceX 余额是否充足
+    if(Number(LPSpaceX.value) > Number(mySpaceXBalance.value)) return ElMessage.error(t('SpaceXbalanceError'));
     if(LPSpaceX.value < 0.01) return ElMessage.error(t('amountSmal'));
     // 验证USDT是否授权
     let USDTofCurrentAccount = await usdtContract.value.methods.allowance(myAddress.value, state.LPAddress.value).call();
