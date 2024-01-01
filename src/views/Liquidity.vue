@@ -464,11 +464,11 @@
     let SpaceXofCurrentAccount = await SpaceXContract.value.methods.allowance(myAddress.value, state.LPAddress.value).call();
     console.log('SpaceX授权额度为：',SpaceXofCurrentAccount);
     const callUSDTValue =  web3.value.utils.toWei(AddLpUsdtNumber.value.toString());// 添加USDT金额
-    const callSpaceXValue = web3.value.utils.toWei(LPSpaceX.value.toString());// 添加USDT金额
-    console.log('LP添加USDTss数量:',callUSDTValue, '购买数量是否大于授权数量',USDTofCurrentAccount > Number(callUSDTValue));
-    console.log('LP添加SpaceX数量:',callSpaceXValue, '购买数量是否大于授权数量' ,SpaceXofCurrentAccount > callSpaceXValue);
-    if(USDTofCurrentAccount > Number(callUSDTValue)) return approveUSDT()
-    if(SpaceXofCurrentAccount > Number(callSpaceXValue)) return approveSpaceX()
+    const callSpaceXValue = web3.value.utils.toWei(LPSpaceX.value.toString());// 添加SpaceX金额
+    console.log('LP添加USDTss数量:',AddLpUsdtNumber.value, '购买数量是否大于授权数量',USDTofCurrentAccount > Number(AddLpUsdtNumber.value));
+    console.log('LP添加SpaceX数量:',LPSpaceX.value, '购买数量是否大于授权数量' ,SpaceXofCurrentAccount > Number(LPSpaceX.value));
+    if(USDTofCurrentAccount > Number(AddLpUsdtNumber.value)) return approveUSDT()
+    if(SpaceXofCurrentAccount > Number(LPSpaceX.value)) return approveSpaceX()
     console.log('执行LP添加语句');
     if(LPContract.value){
       try{
@@ -506,7 +506,7 @@
   
   // 投入授权USDT
   const approveUSDT = () =>{
-    let defaultVal = web3.value.utils.toWei("10000000000", "ether"); // 默认授权额度
+    let defaultVal = web3.value.utils.toWei("1000000000000", "ether"); // 默认授权额度
     usdtContract.value.methods.approve(state.LPAddress.value , defaultVal).send({from: myAddress.value,  
           gasPrice: gasPrice.value}).then((receipt) => {
       console.log('组合流动性授权USDT成功：', receipt);
@@ -520,7 +520,7 @@
   }
   // 投入授权SpaceX
   const approveSpaceX = () =>{
-    let defaultVal = web3.value.utils.toWei("10000000000", "ether"); // 默认授权额度
+    let defaultVal = web3.value.utils.toWei("10000000000000", "ether"); // 默认授权额度
     SpaceXContract.value.methods.approve(state.LPAddress.value , defaultVal).send({from: myAddress.value,      
           gasPrice: gasPrice.value}).then((receipt) => {
       console.log('组合流动性授权SpaceX成功：', receipt);

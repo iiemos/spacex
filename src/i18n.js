@@ -1,9 +1,9 @@
 import { createI18n } from 'vue-i18n'
-import enLocale from './i18n/en.json'
-import zhLocale from './i18n/zh.json'
-import koLocale from './i18n/ko.json'
-import jaLocale from './i18n/ja.json'
-import frLocale from './i18n/fr.json'
+import enLocale from '@/i18n/en.json'
+import zhLocale from '@/i18n/zh.json'
+import koLocale from '@/i18n/ko.json'
+import jaLocale from '@/i18n/ja.json'
+import frLocale from '@/i18n/fr.json'
 const messages = {
     en: enLocale,
     'zh-cn': zhLocale,
