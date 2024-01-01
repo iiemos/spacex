@@ -444,7 +444,7 @@
 
 
 
-
+  // 添加流动性
   const addLiquidityFn2 = useDebounceFn( async(val) => {
     console.log('LPSpaceX',LPSpaceX.value);
     if(!myAddress.value || myAddress.value === '0x00000000000000000000000000000000deadbeef'){
@@ -467,52 +467,71 @@
     const callSpaceXValue = web3.value.utils.toWei(LPSpaceX.value.toString());// 添加USDT金额
     console.log('LP添加USDTss数量:',callUSDTValue, '购买数量是否大于授权数量',USDTofCurrentAccount > Number(callUSDTValue));
     console.log('LP添加SpaceX数量:',callSpaceXValue, '购买数量是否大于授权数量' ,SpaceXofCurrentAccount > callSpaceXValue);
-    if(USDTofCurrentAccount > Number(callUSDTValue) && SpaceXofCurrentAccount > Number(callSpaceXValue)){
-      console.log('执行LP添加语句');
-      if(LPContract.value){
-        try{
-          LPContract.value.methods.addL(
-              callUSDTValue,
-              callSpaceXValue,
-            )
-            .send({
-              from: myAddress.value,
-              // gas: gasLimit.value,
-          gasPrice: gasPrice.value
-            })
-            .on('transactionHash', (hash)=>{
-              console.log(hash);
-              ElMessage.success(t('AddTransactionSent'))
-              console.log("Transaction sent");
-            })
-            .once('receipt', res => {
-              ElMessage.success(t('TransactionSuccess'))
-              console.log("Transaction confirmed");
-              AddLpUsdtNumber.value = 0
-              LPSpaceX.value = 0
-              joinWeb3();
-            }).catch((error) => {
-              console.error('Approval failed:', error);
-              if(error.code == '-32603' || error.message == 'transaction underpriced'){
-                ElMessage.error(t('gasLow'));
-              }
-            });
-          }catch(e){
-            console.log(e);
-          }
-      }
-    }else{
-      approveLPfunc()
+    if(USDTofCurrentAccount > Number(callUSDTValue)) return approveUSDT()
+    if(SpaceXofCurrentAccount > Number(callSpaceXValue)) return approveSpaceX()
+    console.log('执行LP添加语句');
+    if(LPContract.value){
+      try{
+        LPContract.value.methods.addL(
+            callUSDTValue,
+            callSpaceXValue,
+          )
+          .send({
+            from: myAddress.value,
+            // gas: gasLimit.value,
+            gasPrice: gasPrice.value
+          })
+          .on('transactionHash', (hash)=>{
+            console.log(hash);
+            ElMessage.success(t('AddTransactionSent'))
+            console.log("Transaction sent");
+          })
+          .once('receipt', res => {
+            ElMessage.success(t('TransactionSuccess'))
+            console.log("Transaction confirmed");
+            AddLpUsdtNumber.value = 0
+            LPSpaceX.value = 0
+            joinWeb3();
+          }).catch((error) => {
+            console.error('Approval failed:', error);
+            if(error.code == '-32603' || error.message == 'transaction underpriced'){
+              ElMessage.error(t('gasLow'));
+            }
+          });
+        }catch(e){
+          console.log(e);
+        }
     }
   }, 500)
   
   // 投入授权USDT
   const approveUSDT = () =>{
-    // 判断是否授权
-    // let allowanceOfCurrentAccount = await usdtContract.value.methods.allowance(myAddress.value, state.contractAddress.value).call();
-    // console.log('被授权的数量：',allowanceOfCurrentAccount);
+    let defaultVal = web3.value.utils.toWei("10000000000", "ether"); // 默认授权额度
+    usdtContract.value.methods.approve(state.LPAddress.value , defaultVal).send({from: myAddress.value,  
+          gasPrice: gasPrice.value}).then((receipt) => {
+      console.log('组合流动性授权USDT成功：', receipt);
+      ElMessage.success(t('ApprovalUSDTSuccess'))
+    }).catch((error) => {
+      console.error('Approval failed:', error);
+      if(error.code == '-32603' || error.message == 'transaction underpriced'){
+        ElMessage.error(t('gasLow'));
+      }
+    });
   }
   // 投入授权SpaceX
+  const approveSpaceX = () =>{
+    let defaultVal = web3.value.utils.toWei("10000000000", "ether"); // 默认授权额度
+    SpaceXContract.value.methods.approve(state.LPAddress.value , defaultVal).send({from: myAddress.value,      
+          gasPrice: gasPrice.value}).then((receipt) => {
+      console.log('组合流动性授权SpaceX成功：', receipt);
+      ElMessage.success(t('ApprovalSpaceXSuccess'))
+    }).catch((error) => {
+      console.error('Approval failed:', error);
+      if(error.code == '-32603' || error.message == 'transaction underpriced'){
+        ElMessage.error(t('gasLow'));
+      }
+    });
+  }
   // 授权LP合约
   const approveLPfunc = ()=>{
     let defaultVal = web3.value.utils.toWei("10000000000", "ether"); // 默认授权额度
