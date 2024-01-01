@@ -458,14 +458,14 @@
     if(Number(LPSpaceX.value) > Number(mySpaceXBalance.value)) return ElMessage.error(t('SpaceXbalanceError'));
     if(LPSpaceX.value < 0.01) return ElMessage.error(t('amountSmal'));
     // 验证USDT是否授权
-    let USDTofCurrentAccount = await usdtContract.value.methods.allowance(myAddress.value, state.LPAddress.value).call();
+    let USDTofCurrentAccount = await usdtContract.value.methods.allowance(myAddress.value, state.infoData.value.usdtCoin).call();
     console.log('USDT授权额度为：',USDTofCurrentAccount);
     // 验证SpaceX是否授权
     let SpaceXofCurrentAccount = await SpaceXContract.value.methods.allowance(myAddress.value, state.LPAddress.value).call();
     console.log('SpaceX授权额度为：',SpaceXofCurrentAccount);
     const callUSDTValue =  web3.value.utils.toWei(AddLpUsdtNumber.value.toString());// 添加USDT金额
     const callSpaceXValue = web3.value.utils.toWei(LPSpaceX.value.toString());// 添加SpaceX金额
-    console.log('LP添加USDTss数量:',AddLpUsdtNumber.value, '购买数量是否大于授权数量',USDTofCurrentAccount > Number(AddLpUsdtNumber.value));
+    console.log('LP添加USDTss----数量:',AddLpUsdtNumber.value, '购买数量是否大于授权数量',USDTofCurrentAccount > Number(AddLpUsdtNumber.value));
     console.log('LP添加SpaceX数量:',LPSpaceX.value, '购买数量是否大于授权数量' ,SpaceXofCurrentAccount > Number(LPSpaceX.value));
     if(USDTofCurrentAccount > Number(AddLpUsdtNumber.value)) return approveUSDT()
     if(SpaceXofCurrentAccount > Number(LPSpaceX.value)) return approveSpaceX()
