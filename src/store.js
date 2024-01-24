@@ -29,7 +29,7 @@ export const useGlobalState = createGlobalState(
     const userLevel = ref('0')
     const contractAddress=ref('0x9CaA582E6C68700A94A1b579F052083Cee8FF95e') // difi合约地址
     // const LPAddress=ref('0x4805327d973AE7434759283e125F3801f740091D') // lp流动性添加合约地址
-    const LPAddress=ref('0x8A7Ba972aaE29adBa3eaeFb999fabA7268190CD7') // lp流动性添加合约地址
+    const LPAddress=ref('0xf647cE5115377614ac151E455c1793A70C6069Dd') // lp流动性添加合约地址
 
     // getters
     const doubleCount = computed(() => count.value * 2)
